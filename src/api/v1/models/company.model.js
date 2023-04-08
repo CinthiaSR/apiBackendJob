@@ -1,4 +1,4 @@
-import mongoose, { trusted } from "mongoose";
+import mongoose from "mongoose";
 
 const companyShema=new mongoose.Schema({
     username: {
@@ -16,7 +16,11 @@ const companyShema=new mongoose.Schema({
     },
     description:{
         type:String
-    }
+    },
+    vacantes:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'jobVacancy',
+    }]
 },{
     timestamps:true
 })

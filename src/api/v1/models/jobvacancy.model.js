@@ -1,7 +1,7 @@
-import mongoose, { trusted } from "mongoose";
+import mongoose from "mongoose";
 
 const jobVacancyShema=new mongoose.Schema({
-    companyname: {
+    companyName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company',
         require:true
@@ -19,7 +19,7 @@ const jobVacancyShema=new mongoose.Schema({
         type:String
     },
     salary:{
-        type:Number
+        type:String
     },
     activities:{
         type: String
@@ -27,11 +27,11 @@ const jobVacancyShema=new mongoose.Schema({
     extraservices:{
         type:String
     },
-    // job_skills: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'jobSkills',
-    //     require:true
-    // },
+    job_skills: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'jobSkills',
+        require:true
+    }],
 },{
     timestamps:true
 })

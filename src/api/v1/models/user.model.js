@@ -1,4 +1,4 @@
-import mongoose, { trusted } from "mongoose";
+import mongoose from "mongoose";
 
 const userShema=new mongoose.Schema({
     name:{
@@ -36,9 +36,15 @@ const userShema=new mongoose.Schema({
     },
     password:{
         type: String,
-        required:true,
-        unique: true
+        required: true,
+        minLength: 8
     },
+    company_name: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Company'
+        }
+      ]
 },{
     timestamps:true
 })
