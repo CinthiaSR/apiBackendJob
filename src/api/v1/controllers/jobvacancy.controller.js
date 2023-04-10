@@ -11,9 +11,9 @@ getAllJobVacancy=async(req,res,next)=>{
 }
 createVacancy=async(req,res,next)=>{
     try {
-        const {companyName, title, type,mode,city,salary, activities,extraservices}=req.body;
+        const {companyName, title, type,mode,city,salary, activities,status}=req.body;
         const newVacancy=new jobVacancy({
-            companyName, title, type,mode,city,salary, activities,extraservices
+            companyName, title, type,mode,city,salary, activities,status
         })
         await newVacancy.save()
         const company= await Company.findById({_id:newVacancy.companyName})

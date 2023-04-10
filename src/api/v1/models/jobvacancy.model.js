@@ -24,7 +24,7 @@ const jobVacancyShema=new mongoose.Schema({
     activities:{
         type: String
     },
-    extraservices:{
+    status:{
         type:String
     },
     job_skills: [{

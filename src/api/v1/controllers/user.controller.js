@@ -3,7 +3,7 @@ import User from "../models/user.model";
 export class UserController{
 getAllUser=async(req,res,next)=>{
     try {
-        const users=await User.find({})
+        const users=await User.find({}).populate('phase').populate('company_names').populate('user_skills').populate('feedback') 
         res.status(201).send(users)
     } catch (error) {
         next(error)
@@ -26,7 +26,7 @@ createUser=async(req,res,next)=>{
 getUser=async(req,res,next)=>{
     try {
         const {id}=req.params
-        const user=await User.findById(id)  
+        const user=await User.findById(id).populate('phase').populate('company_names').populate('user_skills').populate('feedback') 
         if(!user){
             res.status(404).send({
                 error:'No se encontro ningun registro en la base de datos'
@@ -61,8 +61,7 @@ deleteUser=async(req,res,next)=>{
                 error:'User not found!'
             })
         }
-        res.status(204).send({message:'Registro eliminado correctamente'})
-        res.json({message:'Delete User Ok'})
+        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }

@@ -39,12 +39,27 @@ const userShema=new mongoose.Schema({
         required: true,
         minLength: 8
     },
-    company_name: [
+    company_names: [
         {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Company'
         }
-      ]
+      ],
+    user_skills: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'userSkill'
+        }
+      ],
+    phase:[{
+       type: mongoose.Schema.Types.ObjectId,
+        ref: 'Phase',
+    }],
+    feedback:[{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Feedback',
+  }],
+
 },{
     timestamps:true
 })

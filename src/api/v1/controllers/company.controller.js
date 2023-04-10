@@ -20,7 +20,7 @@ export class CompanyController {
       });
       await newCompany.save();
       const user = await User.findById({ _id: newCompany.username });
-      user.company_name.push(newCompany);
+      user.company_names.push(newCompany);
       await user.save({ validateBeforeSave: false });
       res.status(201).send(newCompany);
     } catch (error) {
@@ -60,7 +60,7 @@ export class CompanyController {
         if(!infoCompany){
             return res.status(404).send({message:'Company not found!'})
         }
-        res.status(201).send(infoCompany)
+        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }
