@@ -11,7 +11,7 @@ export class CompanyController {
   };
   createCompany = async (req, res, next) => {
     try {
-      const { username, company_name, rfc, description } = req.body;
+      const { username, company_name,  description } = req.body;
       const newCompany = new Company({
         username,
         company_name,

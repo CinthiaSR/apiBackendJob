@@ -16,11 +16,11 @@ const userShema=new mongoose.Schema({
     gender: {
         type: String,
     },
-    rfc: {
-        type: String,
-        required:true,
-        unique: true
-    },
+    // rfc: {
+    //     type: String,
+    //     // required:true,
+    //     // unique: true
+    // },
     role: {
         type: String,
         enum: {
@@ -38,6 +38,13 @@ const userShema=new mongoose.Schema({
         type: String,
         required: true,
         minLength: 8
+    },
+    emailToken:{
+      type:String
+    },
+    isVerified:{
+      type:Boolean,
+
     },
     company_names: [
         {

@@ -4,3 +4,4 @@ import registerController from '../controllers/register.controller'
 export default express
 .Router()
 .post('/',registerController.createAccount)
+.get('/:token',registerController.verificationEmail)
