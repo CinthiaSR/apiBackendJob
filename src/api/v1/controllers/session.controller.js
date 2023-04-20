@@ -1,7 +1,8 @@
 
 import bcrypt from 'bcrypt'
 import User from '../models/user.model'
-import JwtServices from '../../services/jwt.services'
+import jwtServices from '../../services/jwt.services'
+// import JwtServices from '../../services/jwt.services'
 import CustomErrorHandler from '../../services/CustomErrorHandler'
 import { AuthErrorHandler } from '../../middlewares/auth'
 import RefreshToken from '../models/refreshToken'
@@ -21,8 +22,8 @@ export class SessionController {
       if (!match) {
         return next(AuthErrorHandler.wrongCredentials())
       }
-      const accessToken = JwtServices.sign({ _id: user._id, role: user.role, email: user.email });
-      const refreshToken = JwtServices.sign({ _id: user._id, role: user.role }, '1y', process.env.REFRESH_TOKEN);
+      const accessToken = jwtServices.sign({ _id: user._id, role: user.role, email: user.email });
+      const refreshToken = jwtServices.sign({ _id: user._id, role: user.role }, '1y', process.env.REFRESH_TOKEN);
       await RefreshToken.create({ token: refreshToken })
       response.status(201).send({ access_token: accessToken,
                                  refresh_token: refreshToken })

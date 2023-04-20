@@ -1,4 +1,5 @@
-import JwtServices from '../services/jwt.services';
+// import JwtServices from '../services/jwt.services';
+import jwtServices from '../services/jwt.services';
 import CustomErrorHandler from '../services/CustomErrorHandler';
 import User from '../v1/models/user.model';
 import { AuthErrorHandler } from './error.handler';
@@ -20,7 +21,7 @@ export class AuthMiddleware {
 
     // Step 4: Verify token
     try {
-        const { _id, role } = await JwtServices.verify(token);
+        const { _id, role } = await jwtServices.verify(token);
         const user = { _id, role }
         request.user = user; 
         // Setting user on req, so we can valid token user in usersController
