@@ -5,6 +5,12 @@ import Company from "../models/company.model";
 export class phaseController{
 getAllPhase=async(req,res,next)=>{
     try {
+        const {page=1,limit=10}=req.query;
+        await Phase.paginate({},req.body,(err,docs)=>{
+            res.send({
+                item:docs
+            })
+        })
         const infoPhase=await Phase.find({}).populate('username').populate('vacancy').populate('companyName')
         res.status(201).send(infoPhase)
     } catch (error) {

@@ -4,6 +4,12 @@ export class jobSkillController{
 
 getAllJobSkills=async(req,res,next)=>{
     try {
+        const {page=1,limit=10}=req.body;
+        await jobSkill.paginate({},req.body,(err,docs)=>{
+            res.send({
+                item:docs
+            })
+        })
         const infoJobSkills= await jobSkill.find({}).populate('vacancy')
         res.status(201).send(infoJobSkills)
     } catch (error) {

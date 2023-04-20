@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import paginate  from "mongoose-paginate-v2";
 const skillMatchSchema=new Schema({
     vacancy:{
         type: mongoose.Schema.Types.ObjectId,
@@ -18,5 +19,6 @@ const skillMatchSchema=new Schema({
 },{
     timestamps:true
 })
+skillMatchSchema.plugin(paginate)
 const skillMatch=mongoose.model('skillMatch',skillMatchSchema)
 export default skillMatch

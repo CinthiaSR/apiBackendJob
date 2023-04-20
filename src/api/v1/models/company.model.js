@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2'
+import paginate  from "mongoose-paginate-v2";
 
 const companyShema=new mongoose.Schema({
     username: {
@@ -9,11 +11,11 @@ const companyShema=new mongoose.Schema({
     company_name:{
         type:String
     },
-    rfc: {
-        type: String,
-        required:true,
-        unique: true
-    },
+    // rfc: {
+    //     type: String,
+    //     required:true,
+    //     unique: true
+    // },
     description:{
         type:String
     },
@@ -24,6 +26,6 @@ const companyShema=new mongoose.Schema({
 },{
     timestamps:true
 })
-
+companyShema.plugin(paginate)
 const Company=mongoose.model('Company',companyShema)
 export default Company

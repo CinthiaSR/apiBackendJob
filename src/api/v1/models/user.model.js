@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import paginate from 'mongoose-paginate-v2'
 const userShema=new mongoose.Schema({
     name:{
         type:String
@@ -16,11 +16,11 @@ const userShema=new mongoose.Schema({
     gender: {
         type: String,
     },
-    // rfc: {
-    //     type: String,
+    rfc: {
+        type: String,
     //     // required:true,
     //     // unique: true
-    // },
+    },
     role: {
         type: String,
         enum: {
@@ -37,7 +37,7 @@ const userShema=new mongoose.Schema({
     password:{
         type: String,
         required: true,
-        minLength: 8
+        // minLength: 8
     },
     emailToken:{
       type:String
@@ -71,5 +71,6 @@ const userShema=new mongoose.Schema({
     timestamps:true
 })
 
+userShema.plugin(paginate)
 const User=mongoose.model('User',userShema)
 export default User

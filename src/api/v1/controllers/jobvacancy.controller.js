@@ -3,6 +3,12 @@ import Company from "../models/company.model";
 export class jobVacancyController{
 getAllJobVacancy=async(req,res,next)=>{
     try {
+        const {page=1,limit=10}=req.body;
+        await jobVacancy.paginate({},req.body,(err,docs)=>{
+            res.send({
+                item:docs
+            })
+        })
         const vacancies=await jobVacancy.find({}).populate('companyName')
         res.status(201).send(vacancies);
     } catch (error) {

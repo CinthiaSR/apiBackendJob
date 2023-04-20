@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import paginate  from "mongoose-paginate-v2";
 
 const userSkillShema=new mongoose.Schema({
     username: {
@@ -15,6 +16,6 @@ const userSkillShema=new mongoose.Schema({
 },{
     timestamps:true
 })
-
+userSkillShema.plugin(paginate)
 const userSkill=mongoose.model('userSkill',userSkillShema)
 export default userSkill

@@ -3,6 +3,12 @@ import skillMatch from "../models/skillmatch.model";
 export class skillMatchController{
 getAllSkillsMatch=async(req,res,next)=>{
     try {
+        const {page=1,limit=10}=req.body;
+        await skillMatch.paginate({},req.body,(err,docs)=>{
+            res.send({
+                item:docs
+            })
+        })
         const infoSkill=await skillMatch.find({}).populate('vacancy').populate('user_skills').populate('job_skills')
         res.status(201).send(infoSkill)
     } catch (error) {

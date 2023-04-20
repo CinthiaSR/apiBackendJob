@@ -18,6 +18,6 @@ export default function routes(app){
     app.use('/api/v1/feedback',feedbackRouter)
     app.use('/api/v1/skillMatch',skillmatchRouter)
     app.use('/api/v1/signup',registerRouter)
-    app.use('/app/v1/login',sessionRouter)
+    app.use('/api/v1/login',sessionRouter)
 
 }

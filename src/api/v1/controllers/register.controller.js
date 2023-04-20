@@ -8,7 +8,8 @@ import MailService  from '@sendgrid/mail';
 export class RegisterController{
 createAccount= async(req,res,next)=>{
     try {
-        const {email,role,password}=req.body;
+        const {email,password,rfc}=req.body||'';
+        const {role}=req.body;
         const hashedPassword=await bcrypt.hash(password,10)
         const register_user=new User({
             email,
@@ -17,8 +18,15 @@ createAccount= async(req,res,next)=>{
             emailToken:jwt.sign({ foo: 'bar', iat: Math.floor(Date.now() / 1000) - 30 }, 'shhhhh'),
             isVerified:false
         })
-       await register_user.save()
-       res.status(201).send(register_user)
+       
+        await register_user.save()
+        res.status(201).send({message:'Candidato creado!'})
+        res.status(201).send(emailToken)
+      
+    
+
+    //    await register_user.save()
+    //    res.status(201).send(register_user)
         // if(!createNew){
         //     return res.status(500).send({message:'User NOT CREATED!'})
         // }
@@ -45,6 +53,55 @@ createAccount= async(req,res,next)=>{
         next(error)
     }
 }
+
+createAccountByCompany= async(req,res,next)=>{
+    try {
+        const {email,password,role,rfc}=req.body||'';
+        const hashedPassword=await bcrypt.hash(password,10)
+        const register_user=new User({
+            email,
+            role,
+            rfc,
+            password:hashedPassword,
+            emailToken:jwt.sign({ foo: 'bar', iat: Math.floor(Date.now() / 1000) - 30 }, 'shhhhh'),
+            isVerified:false
+        })
+       
+        await register_user.save()
+        res.status(201).send({message:'Reclutador creado'})
+        // res.status(201).send(register_user)
+        
+    
+
+    //    await register_user.save()
+    //    res.status(201).send(register_user)
+        // if(!createNew){
+        //     return res.status(500).send({message:'User NOT CREATED!'})
+        // }
+        // const msg={
+        //     from:'noreplay@email.com',
+        //     to: register_user.email,
+        //     subject:'Jobinder- verfiry your email',
+        //     text:`
+        //       Gracias por registarte en nuestro sitio,
+        //       http://jobinder.org/verify-email?token=${register_user.emailToken}
+        //     `,
+        //     html:'Bienvenido'
+        // }
+        // try {
+        //     res.status(201).send(createNew)
+        //     await MailService.send(msg);
+        //     res.status(201).send({message:'exito'})
+        // } catch (error) {
+        //     console.log(error)
+        // }
+     
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    }
+}
+
 
 verificationEmail=async(req,res,next)=>{
     try {

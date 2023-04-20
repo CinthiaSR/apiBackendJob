@@ -5,7 +5,14 @@ import User from "../models/user.model";
 export class feedBackController{
 getAllFeedback=async(req,res,next)=>{
     try {
-        const infoFeedbacks=await feedBack.find({}).populate('username').populate('phase').populate('vacancy').populate('companyName')
+        const {page=1,limit=10}=req.body;
+        await feedBack.paginate({},req.body,(err,docs)=>{
+            res.send({
+                item:docs
+            })
+        })
+        const infoFeedbacks=await feedBack.find()
+        .populate('username').populate('phase').populate('vacancy').populate('companyName')
         res.status(201).send(infoFeedbacks)
     } catch (error) {
         next(error)

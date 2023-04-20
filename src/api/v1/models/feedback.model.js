@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2'
 const feedBackSchema=new mongoose.Schema({
     username: {
         type: mongoose.Schema.Types.ObjectId,
@@ -26,5 +27,6 @@ const feedBackSchema=new mongoose.Schema({
 },{
     timestamps:true
 })
+feedBackSchema.plugin(mongoosePaginate)
 const feedBack=mongoose.model('Feedback',feedBackSchema)
 export default feedBack

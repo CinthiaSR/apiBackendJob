@@ -3,7 +3,14 @@ import User from "../models/user.model";
 export class CompanyController {
   getAllCompany = async (req, res, next) => {
     try {
-      const infoCompanies = await Company.find({}).populate('username');
+      const {page=1,limit=10}=req.query;
+      await Company.paginate({},req.body,(err,docs)=>{
+        res.send({
+          items:docs
+        })
+      })
+      const infoCompanies = await Company.find()
+      .populate('username');
       res.status(201).send(infoCompanies);
     } catch (error) {
       next(error);

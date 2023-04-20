@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import paginate  from "mongoose-paginate-v2";
 const phaseSchema=new Schema({
     username: {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,5 +25,6 @@ const phaseSchema=new Schema({
 },{
     timestamps:true
 })
+phaseSchema.plugin(paginate)
 const Phase=mongoose.model('Phase',phaseSchema)
 export default Phase

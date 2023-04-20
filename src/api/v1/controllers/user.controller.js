@@ -3,7 +3,14 @@ import User from "../models/user.model";
 export class UserController{
 getAllUser=async(req,res,next)=>{
     try {
-        const users=await User.find({}).populate('phase').populate('company_names').populate('user_skills').populate('feedback') 
+        const {page=1,limit=10}=req.query
+        await User.paginate({},req.body,(err,docs)=>{
+            res.send({
+                item:docs
+            })
+        })
+        const users=await User.find()
+        .populate('phase').populate('company_names').populate('user_skills').populate('feedback') 
         res.status(201).send(users)
     } catch (error) {
         next(error)

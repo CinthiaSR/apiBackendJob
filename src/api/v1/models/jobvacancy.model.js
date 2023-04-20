@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 const jobVacancyShema=new mongoose.Schema({
     companyName: {
@@ -35,6 +36,6 @@ const jobVacancyShema=new mongoose.Schema({
 },{
     timestamps:true
 })
-
+jobVacancyShema.plugin(paginate)
 const jobVacancy=mongoose.model('jobVacancy',jobVacancyShema)
 export default jobVacancy
