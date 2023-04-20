@@ -1,10 +1,10 @@
 
 import bcrypt from 'bcrypt'
 import User from '../models/user.model'
-// import RefreshToken from '../models/refreshToken'
 import JwtServices from '../../services/jwt.services'
 import CustomErrorHandler from '../../services/CustomErrorHandler'
 import { AuthErrorHandler } from '../../middlewares/auth'
+import RefreshToken from '../models/refreshToken'
 
 
 export class SessionController {
@@ -22,17 +22,27 @@ export class SessionController {
         return next(AuthErrorHandler.wrongCredentials())
       }
       const accessToken = JwtServices.sign({ _id: user._id, role: user.role, email: user.email });
-      // const refreshToken = JwtServices.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
-      // await RefreshToken.create({ token: refreshToken })
-      response.status(201).send({ access_token: accessToken })
+      const refreshToken = JwtServices.sign({ _id: user._id, role: user.role }, '1y', process.env.REFRESH_TOKEN);
+      await RefreshToken.create({ token: refreshToken })
+      response.status(201).send({ access_token: accessToken,
+                                 refresh_token: refreshToken })
     } catch (error) {
       next(error)
     }
   }
   
 
-  logout(request, response) {
-    response.json({ message: 'Logout Controller' })
+  logout=async(request, response)=>{
+    try {
+      const { refresh_token } = request.body
+  
+      await RefreshToken.deleteOne({ token: refresh_token })
+  
+      response.status(200).send({ message: 'Good bye' })
+    } catch (error) {
+      return next(new Error('Something went wrong in the database'))
+    }
+    // response.json({ message: 'Logout' })
   }
 }
 

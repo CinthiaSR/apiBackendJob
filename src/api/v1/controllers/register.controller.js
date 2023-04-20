@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt'
 import logger from '../../middlewares/logger'
 import User from '../models/user.model';
 import jwt from 'jsonwebtoken'
+import RefreshToken from '../models/refreshToken';
+import jwtServices from '../../services/jwt.services';
 
 import MailService  from '@sendgrid/mail';
 
@@ -22,7 +24,12 @@ createAccount= async(req,res,next)=>{
         await register_user.save()
         res.status(201).send({message:'Candidato creado!'})
         res.status(201).send(emailToken)
-      
+
+        const accessToken = jwtServices.sign({ _id: register_user._id, role: register_user.role, email: register_user.email });
+        const refreshToken = jwtServices.sign({ _id: register_user._id, role: register_user.role }, '1y', process.env.REFRESH_TOKEN);
+        await RefreshToken.create({ token: refreshToken })
+        response.status(201).send({ access_token: accessToken,
+                                   refresh_token: refreshToken })
     
 
     //    await register_user.save()
