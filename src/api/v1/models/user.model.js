@@ -29,6 +29,12 @@ const userShema=new mongoose.Schema({
         },
         required: true
       },
+    bachelor:{
+      type: String,
+    },
+    working_experience:{
+      type: String,
+    },
     email:{
         type: String,
         required:true,

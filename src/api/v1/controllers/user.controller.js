@@ -18,9 +18,9 @@ getAllUser=async(req,res,next)=>{
 }
 createUser=async(req,res,next)=>{
     try {
-        const{name,last_name,avatar_url,age,gender,rfc,role,email,password}=req.body
+        const{name,last_name,avatar_url,age,gender,rfc,role,bachelor, working_experience,email,password}=req.body
         const newUser=new User({
-            name,last_name,avatar_url,age,gender,rfc,role,email,password
+            name,last_name,avatar_url,age,gender,rfc,role,bachelor,working_experience,email,password
         })
         await newUser.save()
         res.status(201).send(newUser)
