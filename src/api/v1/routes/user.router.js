@@ -6,7 +6,7 @@ export default express
 .Router()
 .get('/',userController.getAllUser)
 // .post('/',AuthMiddleware.auth,userController.createUser)
-.post('/',validateCreateAccount,userController.createUser)
+.post('/',userController.createUser)
 .get('/:id',userController.getUser)
 .patch('/:id',AuthMiddleware.auth,userController.updateUser)
 .delete('/:id',AuthMiddleware.auth,userController.deleteUser)

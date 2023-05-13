@@ -1,5 +1,6 @@
 import jobVacancy from "../models/jobvacancy.model";
 import Company from "../models/company.model";
+import User from "../models/user.model";
 export class jobVacancyController{
 getAllJobVacancy=async(req,res,next)=>{
     try {
@@ -22,8 +23,8 @@ createVacancy=async(req,res,next)=>{
             companyName, title, type,mode,city,salary, activities,status
         })
         await newVacancy.save()
-        const company= await Company.findById({_id:newVacancy.companyName})
-        company.vacantes.push(newVacancy)
+        const company= await User.findById({_id:newVacancy.companyName})
+        company.company_names.push(newVacancy)
         await company.save({validateBeforeSave:false})
         res.status(201).send(newVacancy)
     } catch (error) {

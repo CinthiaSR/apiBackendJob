@@ -6,7 +6,7 @@ import { validateForUserSkill } from '../validators/userSkill.validator'
 export default express
 .Router()
 .get('/',userskillController.getAllUserSkills)
-.post('/',validateForUserSkill,userskillController.createUserSkill)
+.post('/',userskillController.createUserSkill)
 .get('/:id',userskillController.getUserSkill)
-.patch('/:id',validateForUserSkill,userskillController.updateUserSkill)
+.patch('/:id',userskillController.updateUserSkill)
 .delete('/:id',userskillController.deleteUserSkill)

@@ -55,7 +55,7 @@ const userShema=new mongoose.Schema({
     company_names: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Company'
+          ref: 'Vacancy'
         }
       ],
     user_skills: [

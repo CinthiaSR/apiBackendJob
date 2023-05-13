@@ -5,7 +5,7 @@ import { validateForPhase } from '../validators/phase.validator'
 export default express
 .Router()
 .get('/',phaseController.getAllPhase)
-.post('/',AuthMiddleware.auth,validateForPhase,phaseController.createPhase)
+.post('/',AuthMiddleware.auth,phaseController.createPhase)
 .get('/:id',phaseController.getPhase)
-.patch('/:id',AuthMiddleware.auth,validateForPhase,phaseController.updatePhase)
+.patch('/:id',AuthMiddleware.auth,phaseController.updatePhase)
 .delete('/:id',AuthMiddleware.auth,phaseController.deletePhase)

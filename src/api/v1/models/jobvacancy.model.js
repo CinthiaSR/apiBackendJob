@@ -4,7 +4,7 @@ import paginate from "mongoose-paginate-v2";
 const jobVacancyShema=new mongoose.Schema({
     companyName: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'User',
         require:true
     },
     title:{
