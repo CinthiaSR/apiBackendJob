@@ -26,7 +26,8 @@ export class SessionController {
       const refreshToken = jwtServices.sign({ _id: user._id, role: user.role }, '1y', process.env.REFRESH_TOKEN);
       await RefreshToken.create({ token: refreshToken })
       response.status(201).send({ access_token: accessToken,
-                                 refresh_token: refreshToken})
+                                 refresh_token: refreshToken,
+                                role:user.role, email:user.email})
     } catch (error) {
       next(error)
     }
