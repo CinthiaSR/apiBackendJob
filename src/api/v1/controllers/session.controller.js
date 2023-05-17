@@ -27,7 +27,8 @@ export class SessionController {
       await RefreshToken.create({ token: refreshToken })
       response.status(201).send({ access_token: accessToken,
                                  refresh_token: refreshToken,
-                                role:user.role, email:user.email})
+
+                                 role:user.role, email:user.email})
     } catch (error) {
       next(error)
     }

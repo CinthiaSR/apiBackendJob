@@ -29,7 +29,8 @@ createAccount= async(req,res,next)=>{
         const refreshToken = jwtServices.sign({ _id: register_user._id, role: register_user.role }, '1y', process.env.REFRESH_TOKEN);
         await RefreshToken.create({ token: refreshToken })
         response.status(201).send({ access_token: accessToken,
-                                   refresh_token: refreshToken })
+                                   refresh_token: refreshToken,
+                                   role:register_user.role, email:register_user.email })
     
 
     //    await register_user.save()
