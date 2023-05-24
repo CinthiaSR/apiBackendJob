@@ -34,7 +34,7 @@ createVacancy=async(req,res,next)=>{
 getVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
-        const infoVacancy=await jobVacancy.findById(id).populate('companyName')
+        const infoVacancy=await jobVacancy.findById(id).populate('companyName').populate(['job_skills'])
         if(!infoVacancy){
             return res.status(404).send({message:'Vacancy not found!'})
         }
