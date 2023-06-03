@@ -4,8 +4,10 @@ import User from '../models/user.model';
 import jwt from 'jsonwebtoken'
 import RefreshToken from '../models/refreshToken';
 import jwtServices from '../../services/jwt.services';
+import { getRandomInt } from '../lib/helperLib';
 
 import MailService  from '@sendgrid/mail';
+import { sendCodeEmail } from '../lib/nodeMailer';
 
 export class RegisterController{
 createAccount= async(req,res,next)=>{
@@ -28,7 +30,7 @@ createAccount= async(req,res,next)=>{
         const accessToken = jwtServices.sign({ _id: register_user._id, role: register_user.role, email: register_user.email });
         const refreshToken = jwtServices.sign({ _id: register_user._id, role: register_user.role }, '1y', process.env.REFRESH_TOKEN);
         await RefreshToken.create({ token: refreshToken })
-        response.status(201).send({ access_token: accessToken,
+        res.status(201).send({ access_token: accessToken,
                                    refresh_token: refreshToken,
                                    role:register_user.role, email:register_user.email })
     
@@ -57,8 +59,9 @@ createAccount= async(req,res,next)=>{
         // }
      
     } catch (error) {
+        //res.status(500).json(error);
         logger.error(error)
-        next(error)
+       next(error);
     }
 }
 
@@ -109,6 +112,32 @@ createAccountByCompany= async(req,res,next)=>{
         next(error)
     }
 }
+
+ 
+
+  sendAccesCode = async(req,res,next)=>{
+    const dataLogin = req.body;
+    let objRes= { 
+        msg: 'Enviando AccessCode al email del usuario:..'
+    }
+    try {
+        const code = getRandomInt(123456,999999);
+        const resultSendCode= await sendCodeEmail({
+            code,
+            email: dataLogin.email
+        });
+        objRes= {
+            ...objRes,
+            code,
+            dataLogin,
+            resultSendCode
+        }
+        res.status(200).json(objRes);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+
+  }
 
 
 verificationEmail=async(req,res,next)=>{
