@@ -26,7 +26,7 @@ createVacancy=async(req,res,next)=>{
         const company= await User.findById({_id:newVacancy.companyName})
         company.company_names.push(newVacancy)
         await company.save({validateBeforeSave:false})
-        res.status(201).json({message:'Created Ok',newVacancy})
+        res.status(201).send(newVacancy)
     } catch (error) {
         next(error)
     }
@@ -37,9 +37,8 @@ getVacancy=async(req,res,next)=>{
         const infoVacancy=await jobVacancy.findById(id).populate('companyName').populate(['job_skills'])
         if(!infoVacancy){
             return res.status(404).send({message:'Vacancy not found!'})
-        }else{
-            res.status(201).json({message:'Get Ok',infoVacancy})
         }
+        res.status(201).send(infoVacancy)
     } catch (error) {
         next(error)
     }
@@ -51,9 +50,8 @@ updateVacancy=async(req,res,next)=>{
         const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
         if(!infoVacancy){
             return res.status(404).send({message:'Vacancy not found!'})
-        }else{
-            res.status(201).json({message:'Updated Ok',infoVacancy})
         }
+        res.status(201).send(infoVacancy)
     } catch (error) {
         next(error)
     }
@@ -64,10 +62,8 @@ deleteVacancy=async(req,res,next)=>{
         const infoVacancy=await jobVacancy.findByIdAndDelete(id)
         if(!infoVacancy){
             return res.status(404).send({message:'Vacancy not found!'})
-        }else{
-
-            res.status(204).json({message:'Deleted!'})
         }
+        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }
