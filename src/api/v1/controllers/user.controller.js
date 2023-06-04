@@ -9,9 +9,10 @@ getAllUser=async(req,res,next)=>{
                 item:docs
             })
         })
-        const users=await User.find()
-        .populate('phase').populate('company_names').populate('user_skills').populate('feedback') 
-        res.status(201).send(users)
+        //const users=await User.find()
+        //.populate('phase').populate('company_names').populate('user_skills').populate('feedback') 
+
+        //res.status(201).json(users)
     } catch (error) {
         next(error)
     }
@@ -37,9 +38,11 @@ getUser=async(req,res,next)=>{
             res.status(404).send({
                 error:'No se encontro ningun registro en la base de datos'
             })
+        }else{
+            res.status(200).json({message:'Get User ok',user})
         }     
-        res.status(200).send(user)
-        res.json({message:'Get User ok'})
+        
+        
     } catch (error) {
         next(error)
     }
