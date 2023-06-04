@@ -9,8 +9,8 @@ getAllSkillsMatch=async(req,res,next)=>{
                 item:docs
             })
         })
-        const infoSkill=await skillMatch.find({}).populate('vacancy').populate('user_skills').populate('job_skills')
-        res.status(201).send(infoSkill)
+        // const infoSkill=await skillMatch.find({}).populate('vacancy').populate('user_skills').populate('job_skills')
+        // res.status(201).send(infoSkill)
     } catch (error) {
         next(error)
     }
@@ -23,7 +23,7 @@ createSkillMatch=async(req,res,next)=>{
             vacancy,user_skills,job_skills
         })
         await newSkill.save()
-        res.status(201).send(newSkill)
+        res.status(201).json({message:'Created ok',newSkill})
     } catch (error) {
         next(error)
     }
@@ -35,8 +35,9 @@ getSkillMatch=async(req,res,next)=>{
         const infoSkill= await skillMatch.findById(id).populate('vacancy').populate('user_skills').populate('job_skills');
         if(!infoSkill){
             return res.status(404).send({message:'Skills Group not found!'})
+        }else{
+            res.status(201).json({message:'Get ok',infoSkill})
         }
-        res.status(201).send(infoSkill)
     } catch (error) {
         next(error)
     }
@@ -49,8 +50,9 @@ updateSkillMatch=async(req,res,next)=>{
        const infoSkill=await skillMatch.findByIdAndUpdate(id,bodyParams,{new:true})
        if(!infoSkill){
         return res.status(404).send({message:'Skills Group not found!'})
+       }else{
+           res.status(201).json({message:'Updated ok',infoSkill})
        }
-       res.status(201).send(infoSkill)
     } catch (error) {
         next(error)
     }
@@ -62,12 +64,12 @@ deleteSkillMatch=async(req,res,next)=>{
        const infoSkill= skillMatch.findByIdAndDelete(id);
        if(!infoSkill){
         return res.status(404).send({message:'Skills Group not found!'});
+       }else{
+           res.status(201).json({message:'Deleted!'})
        }
-       res.status(201).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }
-
 }
 }
 export default new skillMatchController()

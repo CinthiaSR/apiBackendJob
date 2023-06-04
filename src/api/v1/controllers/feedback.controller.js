@@ -11,9 +11,9 @@ getAllFeedback=async(req,res,next)=>{
                 item:docs
             })
         })
-        const infoFeedbacks=await feedBack.find()
-        .populate('username').populate('phase').populate('vacancy').populate('companyName')
-        res.status(201).send(infoFeedbacks)
+        // const infoFeedbacks=await feedBack.find()
+        // .populate('username').populate('phase').populate('vacancy').populate('companyName')
+        // res.status(201).send(infoFeedbacks)
     } catch (error) {
         next(error)
     }
@@ -29,7 +29,7 @@ createFeedback=async(req,res,next)=>{
         const newFeedBackByUser=await User.findById({_id:newFeedback.username})
         newFeedBackByUser.feedback.push(newFeedback)
         await newFeedBackByUser.save({validateBeforeSave:false})
-        res.status(201).send(newFeedback)
+        res.status(201).json({message:'Create Ok',newFeedback})
     } catch (error) {
         next(error)
     }
@@ -41,8 +41,9 @@ getFeedback=async(req,res,next)=>{
         const infoFeedback=await feedBack.findById(id).populate('username').populate('phase').populate('vacancy').populate('companyName')
         if(!infoFeedback){
             return res.status(404).send({message:'Feedback not found!'})
+        }else{
+            res.status(201).json({message:'Get ok',infoFeedback})
         }
-        res.status(201).send(infoFeedback)
     } catch (error) {
         next(error)
     }
@@ -55,8 +56,9 @@ updateFeedback=async(req,res,next)=>{
         const infoFeedback=await feedBack.findByIdAndUpdate(id,bodyParams,{new:true})
         if(!infoFeedback){
             return res.status(404).send({message:'Feedback not found!'})
+        }else{
+            res.status(201).json({message:'Updated ok',infoFeedback})
         }
-        res.status(201).send(infoFeedback)
     } catch (error) {
         next(error)
     }
@@ -68,8 +70,9 @@ deleteFeedback=async(req,res,next)=>{
         const infoFeedback= await feedBack.findByIdAndDelete(id);
         if(!infoFeedback){
             return res.status(404).send({message:'Feedback not found!'})
+        }else{
+            res.status(201).json({message:'Deleted!'})
         }
-        res.status(201).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }
