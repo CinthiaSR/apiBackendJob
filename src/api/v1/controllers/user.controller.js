@@ -44,6 +44,7 @@ getUser=async(req,res,next)=>{
         next(error)
     }
 }
+// aqui
 updateUser=async(req,res,next)=>{
     try {
         const {id}=req.params
