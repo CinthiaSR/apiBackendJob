@@ -5,7 +5,7 @@ export class userSkillsController{
 getAllUserSkills=async(req,res,next)=>{
     try {
         const infoUserSkills=await userSkill.find({}).populate('username')
-        res.status(201).send(infoUserSkills)
+        res.status(201).json({message:'Skill',infoUserSkills})
     } catch (error) {
         next(error)
     }
@@ -20,7 +20,7 @@ createUserSkill=async(req,res,next)=>{
         const regUser=await User.findById({_id:newUserSkill.username})
         regUser.user_skills.push(newUserSkill)
         await regUser.save({validateBeforeSave:false});
-        res.status(201).send(newUserSkill);
+        res.status(201).json({message:'Created ok',newUserSkill});
     } catch (error) {
         next(error)
     }
@@ -32,8 +32,9 @@ getUserSkill=async(req,res,next)=>{
         const infoUserSkill= await userSkill.findById(id).populate('username')
         if(!infoUserSkill){
             return res.status(404).send({message:'Skill not found!'})
+        }else{
+            res.status(201).json({message:'Get ok',infoUserSkill})
         }
-        res.status(201).send(infoUserSkill)
     } catch (error) {
         next(error)
     }
@@ -46,8 +47,9 @@ updateUserSkill=async(req,res,next)=>{
         const infoUserSkill=await userSkill.findByIdAndUpdate(id,bodyParams,{new:true})
         if(!infoUserSkill){
             return res.status(404).send({message:'Skill not found!'})
+        }else{
+            res.status(201).json({message:'Updated ok',infoUserSkill})
         }
-        res.status(201).send(infoUserSkill)
     } catch (error) {
         next(error)
     }
@@ -59,8 +61,9 @@ deleteUserSkill=async(req,res,next)=>{
         const deleteSkill=await userSkill.findByIdAndDelete(id)
         if(!deleteSkill){
             return res.status(404).send({message:'Skill not found!'})
+        }else{
+            res.status(204).json({message:'Deleted!'})
         }
-        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }
