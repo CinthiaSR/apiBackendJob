@@ -9,10 +9,6 @@ getAllUser=async(req,res,next)=>{
                 item:docs
             })
         })
-        //const users=await User.find()
-        //.populate('phase').populate('company_names').populate('user_skills').populate('feedback') 
-
-        //res.status(201).json(users)
     } catch (error) {
         next(error)
     }
@@ -24,8 +20,8 @@ createUser=async(req,res,next)=>{
             name,last_name,avatar_url,age,gender,rfc,role,bachelor,working_experience,email,password
         })
         await newUser.save()
-        res.status(201).send(newUser)
-        res.json({message:'Create User Ok'})
+        res.status(201).json({message:'Create User Ok',newUser})
+        // res.json({message:'Create User Ok'})
     } catch (error) {
         next(error)
     }
@@ -41,8 +37,6 @@ getUser=async(req,res,next)=>{
         }else{
             res.status(200).json({message:'Get User ok',user})
         }     
-        
-        
     } catch (error) {
         next(error)
     }
@@ -55,9 +49,9 @@ updateUser=async(req,res,next)=>{
         const updateUser=await User.findByIdAndUpdate(id,bodyParams, {new:true})
         if(!updateUser){
             return res.status(404).send({message:'User not found!'})
+        }else{
+            res.status(201).json({message:'Update User Ok',updateUser})
         }
-        res.status(201).send(updateUser)
-        res.json({message:'Update User Ok'})
     } catch (error) {
         next(error)
     }
@@ -71,8 +65,9 @@ deleteUser=async(req,res,next)=>{
             res.status(404).send({
                 error:'User not found!'
             })
+        }else{
+            res.status(204).send({message:'Deleted!'})
         }
-        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }
