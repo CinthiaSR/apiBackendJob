@@ -23,10 +23,7 @@ createVacancy=async(req,res,next)=>{
             companyName, title, type,mode,city,salary, activities,status
         })
         await newVacancy.save()
-        const company= await User.findById({_id:newVacancy.companyName})
-        company.company_names.push(newVacancy)
-        await company.save({validateBeforeSave:false})
-        res.status(201).send(newVacancy)
+        res.status(201).json({message:'Created Ok',newVacancy})
     } catch (error) {
         next(error)
     }
