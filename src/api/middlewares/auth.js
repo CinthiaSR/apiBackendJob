@@ -18,6 +18,7 @@ export class AuthMiddleware {
     //Step 3: If header exist split bearer and token
     // Apply middleman auth in 
     const token = authHeader.split(' ')[1];
+    //console.log('authHeader:..',authHeader);
 
     // Step 4: Verify token
     try {

@@ -1,4 +1,6 @@
 import { S3Client, PutObjectCommand, PutBucketCorsCommand } from "@aws-sdk/client-s3";
+import fs from 'fs';
+import { mainDir } from "../../..";
 
 const {AWS_ACCESSKEYID,AWS_BUCKETNAME,AWS_SECRETACCESSKEY}=process.env
 
@@ -8,8 +10,11 @@ export const setCorsBucket = async () => {
       accessKeyId: AWS_ACCESSKEYID,
       secretAccessKey: AWS_SECRETACCESSKEY,
     },
-    region: "us-east-1",
+    region: "us-east-2",
   });
+  console.log('AWS_ACCESSKEYID:',AWS_ACCESSKEYID);
+  console.log('AWS_SECRETACCESSKEY:',AWS_SECRETACCESSKEY);
+  console.log('AWS_BUCKETNAME:',AWS_BUCKETNAME);
   try {
     const input = {
       // PutBucketCorsRequest
@@ -41,9 +46,9 @@ export const setCorsBucket = async () => {
     const command = new PutBucketCorsCommand(input);
     const response = await client.send(command);
 
-    console.log(response);
+    console.log('response setCorsBucket:..',response);
   } catch (error) {
-    console.log(error);
+    console.log('Error setBucketCors:..',error);
   }
 };
 
@@ -53,13 +58,13 @@ export const uploadOneFileToBucket = async (dataFile, target_id) => {
       accessKeyId: AWS_ACCESSKEYID,
       secretAccessKey: AWS_SECRETACCESSKEY,
     },
-    region: "us-east-1",
+    region: "us-east-2",
   });
   let response = {
     msg: "Proceso upLoadOneFileToBubket:..",
   };
   try {
-    fs.readFile(`${__dirname}/${dataFile.tempFilePath}`, async (err, data) => {
+    fs.readFile(`${mainDir}/${dataFile.tempFilePath}`, async (err, data) => {
       if (err) {
         console.log("error al leer el archivo:..", err);
       } else {
