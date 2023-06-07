@@ -6,6 +6,9 @@ import * as os from 'os';
 import logger from '../api/middlewares/logger';
 import errorHandler from '../api/middlewares/error.handler';
 import cors from 'cors';
+import fileUpload from "express-fileupload";
+
+
 const app = new Express();
 
 export default class ExpressServer {
@@ -15,9 +18,18 @@ export default class ExpressServer {
     app.use(
       bodyParser.urlencoded({
         extended: true,
-        limit: process.env.REQUEST_LIMIT || '100kb',
+        limit: process.env.REQUEST_LIMIT || '20Mb',
       })
     )
+    app.use(Express.json())
+    app.use(fileUpload({
+      useTempFiles: true,
+      tempFileDir: './upload',
+      limits: {
+        fileSize: 2000000 //1mb
+    },
+    abortOnLimit: false
+    }))
   }
 
   router(routes) {
