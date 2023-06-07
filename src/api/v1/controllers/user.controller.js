@@ -3,6 +3,7 @@ import jwtServices from "../../services/jwt.services";
 import fs from "fs";
 import { uploadOneFileToBucket } from "../lib/awsLib";
 import { mainDir } from "../../.."; 
+import bcrypt from 'bcrypt'
 
 
 const { AWS_BUCKETNAME } = process.env;
@@ -77,21 +78,29 @@ export class UserController {
       next(error);
     }
   };
-  // aqui
+  // aqui se actualiza el perfil del usuario
   updateUser = async (req, res, next) => {
     let objRes = {};
     try {
       const { id } = req.params;
-      const { _id, role } = await jwtServices.verify(id);
+      const { _id, role, password } = await jwtServices.verify(id);
       const bodyParams = { ...req.body };
-      const file = req.files.image;
+      const file = req?.files?.image;
+      if(bodyParams.password!==''){
+        const tempPass = bodyParams.password;
+        const hashedPassword=await bcrypt.hash(tempPass,10)
+        bodyParams.password = hashedPassword;
+      }else{
+        bodyParams.password=password
+      }
+      
       objRes = {
         id,
         bodyParams,
         _id,
         file,
       };
-      console.log("objRes:..", objRes);
+      //console.log("objRes:..", objRes);
       if (file) {
         const responseUploadFile = await uploadOneFileToBucket(file, _id);
         if (responseUploadFile) {

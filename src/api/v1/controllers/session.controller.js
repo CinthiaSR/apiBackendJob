@@ -28,8 +28,8 @@ export class SessionController {
       response.status(201).json({ access_token: accessToken,
                                  refresh_token: refreshToken,
                                  role:user.role, email:user.email,
-                                 name:user.name, last_name: user.last_name, avatar:user.avatar_url,
-                                 age:user.age, gender:user.gender, rfc:user.rfc, bachelor:user.bachelor,
+                                 name:user.name, last_name: user.last_name, avatar_url:user.avatar_url,
+                                 age:user.age, working_experience:user.working_experience, gender:user.gender, rfc:user.rfc, bachelor:user.bachelor,
                                  skills:user.user_skills, phase:user.phase, feeback:user.feedback})
     } catch (error) {
       next(error)
