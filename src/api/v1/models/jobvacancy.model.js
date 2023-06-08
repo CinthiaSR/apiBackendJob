@@ -29,8 +29,14 @@ const jobVacancyShema=new mongoose.Schema({
         type: String
     },
     status:{
-        type:String
+        type: String
     },
+    applicants:[
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User'
+        }
+      ],
     job_skills: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'jobSkill',
