@@ -25,12 +25,11 @@ export class SessionController {
       const accessToken = jwtServices.sign({ _id: user._id, role: user.role, email: user.email });
       const refreshToken = jwtServices.sign({ _id: user._id, role: user.role }, '1y', process.env.REFRESH_TOKEN);
       await RefreshToken.create({ token: refreshToken })
-      response.status(201).json({ access_token: accessToken,
-                                 refresh_token: refreshToken,
-                                 role:user.role, email:user.email,
-                                 name:user.name, last_name: user.last_name, avatar_url:user.avatar_url,
-                                 age:user.age, working_experience:user.working_experience, gender:user.gender, rfc:user.rfc, bachelor:user.bachelor,
-                                 skills:user.user_skills, phase:user.phase, feeback:user.feedback})
+      let tempUser = {...user._doc,accessToken};
+      delete tempUser._id;
+      delete tempUser.password;
+
+      response.status(201).json(tempUser);
     } catch (error) {
       next(error)
     }

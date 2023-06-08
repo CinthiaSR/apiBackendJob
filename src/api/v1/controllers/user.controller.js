@@ -81,12 +81,19 @@ export class UserController {
   // aqui se actualiza el perfil del usuario
   updateUser = async (req, res, next) => {
     let objRes = {};
+    //console.log('Actualizando dataUser:..',req.body);
     try {
-      const { id } = req.params;
-      const { _id, role, password } = await jwtServices.verify(id);
+      const { token } = req.params; 
+      const { _id, role, password } = await jwtServices.verify(token);
       const bodyParams = { ...req.body };
       const file = req?.files?.image;
-      if(bodyParams.password!==''){
+      /*objRes={
+        token,
+        bodyParams
+      }
+      console.log(objRes);
+      res.status(200).json(objRes);*/
+      if(bodyParams?.password!==''&&bodyParams?.password!==undefined){
         const tempPass = bodyParams.password;
         const hashedPassword=await bcrypt.hash(tempPass,10)
         bodyParams.password = hashedPassword;
@@ -95,9 +102,7 @@ export class UserController {
       }
       
       objRes = {
-        id,
         bodyParams,
-        _id,
         file,
       };
       //console.log("objRes:..", objRes);
@@ -109,7 +114,7 @@ export class UserController {
             new: true,
           });
           if (!updateUser) {
-            return res.status(404).send({ message: "User not found!" });
+             res.status(404).send({ message: "User not found!" });
           } else {
             res.status(201).json({ message: "Update User Ok", updateUser });
           }
@@ -126,13 +131,14 @@ export class UserController {
           new: true,
         });
         if (!updateUser) {
-          return res.status(404).send({ message: "User not found!" });
+           res.status(404).send({ message: "User not found!" });
         } else {
           res.status(201).json({ message: "Update User Ok", updateUser });
         }
       }
       //res.status(200).json(objRes)
     } catch (error) {
+      console.log(error);
       next(error);
     }
   };
@@ -149,6 +155,7 @@ export class UserController {
         res.status(204).send({ message: "Deleted!" });
       }
     } catch (error) {
+      console.log(error);
       next(error);
     }
   };
