@@ -1,6 +1,7 @@
 import jobVacancy from "../models/jobvacancy.model";
 import Company from "../models/company.model";
 import User from "../models/user.model";
+import jwtServices from "../../services/jwt.services";
 export class jobVacancyController{
 getAllJobVacancy=async(req,res,next)=>{
     try {
@@ -44,12 +45,26 @@ updateVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
         const bodyParams={...req.body}
+
+        if(bodyParams?.token){
+            const { _id } = await jwtServices.verify(bodyParams.token);
+            const retriveDataVacancie = await jobVacancy.findById(id);
+            if(retriveDataVacancie?.applicants){
+                bodyParams.applicants= [...retriveDataVacancie.applicants,_id];
+            }else{
+                bodyParams.applicants=[_id];
+            }
+            delete bodyParams.token;
+        }
+      
         const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
+        //console.log('infoVacancy',infoVacancy);
         if(!infoVacancy){
             return res.status(404).send({message:'Vacancy not found!'})
         }
         res.status(201).send(infoVacancy)
     } catch (error) {
+        console.log(error);
         next(error)
     }
 }
