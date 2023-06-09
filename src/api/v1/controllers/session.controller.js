@@ -13,7 +13,11 @@ export class SessionController {
     try {
       const { email, password } = request.body
       // check if email exists
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email }).populate("phase")
+      .populate("company_names")
+      .populate("my_vacancies")
+      .populate("user_skills")
+      .populate("feedback");
       if (!user) {
         return next(AuthErrorHandler.wrongCredentials())
       }
