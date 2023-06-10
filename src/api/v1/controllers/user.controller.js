@@ -60,11 +60,13 @@ export class UserController {
   };
   getUser = async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { token } = req.params;
+      const { _id } = await jwtServices.verify(token);
 
-      const user = await User.findById(id)
+      const user = await User.findById(_id)
         .populate("phase")
         .populate("company_names")
+        .populate("my_vacancies")
         .populate("user_skills")
         .populate("feedback");
       if (!user) {
@@ -72,6 +74,8 @@ export class UserController {
           error: "No se encontro ningun registro en la base de datos",
         });
       } else {
+        delete user._id;
+        delete user.password;
         res.status(200).json({ message: "Get User ok", user });
       }
     } catch (error) {
