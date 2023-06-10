@@ -10,6 +10,9 @@ const jobVacancyShema=new mongoose.Schema({
     companyName:{
         type:String
     },
+    avatar_url:{
+        type: String
+    },
     title:{
         type:String
     },
