@@ -46,16 +46,28 @@ updateVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
         const bodyParams={...req.body}
+        const {token,deleteApplicant}= bodyParams;
 
-        if(bodyParams?.token){
+        if(token){
             const { _id } = await jwtServices.verify(bodyParams.token);
             const retriveDataVacancie = await jobVacancy.findById(id);
-            if(retriveDataVacancie?.applicants){
-                bodyParams.applicants= [...retriveDataVacancie.applicants,_id];
-            }else{
-                bodyParams.applicants=[_id];
+            //este caso es cuando se agrega un id al array de applicants
+            if(!deleteApplicant){
+                if(retriveDataVacancie?.applicants){
+                    bodyParams.applicants= [...retriveDataVacancie.applicants,_id];
+                }else{
+                    bodyParams.applicants=[_id];
+                }
+                delete bodyParams.token;
             }
-            delete bodyParams.token;
+            //este es el caso cuando se elimina un id del array de applicants
+            if(deleteApplicant){
+                if(retriveDataVacancie?.applicants){
+                    bodyParams.applicants= retriveDataVacancie.applicants.filter(item=>item._id!==_id);
+                }
+                delete bodyParams.token;
+            }
+            
         }
       
         const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
