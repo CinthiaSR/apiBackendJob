@@ -42,6 +42,7 @@ getVacancy=async(req,res,next)=>{
         next(error)
     }
 }
+//actualiza el dataVacancy
 updateVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
