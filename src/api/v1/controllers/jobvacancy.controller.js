@@ -18,10 +18,11 @@ getAllJobVacancy=async(req,res,next)=>{
     }
 }
 createVacancy=async(req,res,next)=>{
+    //console.log('dataFront:..',req.body);
     try {
-        const {companyName, title, type,mode,city,salary, activities,status}=req.body;
+        const {companyName, title, type,mode,city,salary, activities,status, job_skills}=req.body;
         const newVacancy=new jobVacancy({
-            companyName, title, type,mode,city,salary, activities,status
+            companyName, title, type,mode,city,salary, activities,status,job_skills
         })
         await newVacancy.save()
         res.status(201).json({message:'Created Ok',newVacancy})
@@ -45,16 +46,28 @@ updateVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
         const bodyParams={...req.body}
+        const {token,deleteApplicant}= bodyParams;
 
-        if(bodyParams?.token){
+        if(token){
             const { _id } = await jwtServices.verify(bodyParams.token);
             const retriveDataVacancie = await jobVacancy.findById(id);
-            if(retriveDataVacancie?.applicants){
-                bodyParams.applicants= [...retriveDataVacancie.applicants,_id];
-            }else{
-                bodyParams.applicants=[_id];
+            //este caso es cuando se agrega un id al array de applicants
+            if(!deleteApplicant){
+                if(retriveDataVacancie?.applicants){
+                    bodyParams.applicants= [...retriveDataVacancie.applicants,_id];
+                }else{
+                    bodyParams.applicants=[_id];
+                }
+                delete bodyParams.token;
             }
-            delete bodyParams.token;
+            //este es el caso cuando se elimina un id del array de applicants
+            if(deleteApplicant){
+                if(retriveDataVacancie?.applicants){
+                    bodyParams.applicants= retriveDataVacancie.applicants.filter(item=>item._id!==_id);
+                }
+                delete bodyParams.token;
+            }
+            
         }
       
         const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
