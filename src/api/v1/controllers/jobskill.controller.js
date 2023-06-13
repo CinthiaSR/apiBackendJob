@@ -16,17 +16,19 @@ getAllJobSkills=async(req,res,next)=>{
         next(error)
     }
 }
+//crear
 createJobSkill=async(req,res,next)=>{
     try {
-        const {vacancy,name,level}=req.body;
+        
+        const {name,level}=req.body;
         const newJobSkill=new jobSkill({
-            vacancy,name,level
+            name,level
         });
         await newJobSkill.save()
-        const newSkillVacancy=await jobVacancy.findById({_id:newJobSkill.vacancy})
+        /*const newSkillVacancy=await jobVacancy.findById({_id:newJobSkill.vacancy})
         newSkillVacancy.job_skills.push(newJobSkill)
-        await newSkillVacancy.save({validateBeforeSave:false});
-        res.status(201).json({message:'Created Ok',newUser})
+        await newSkillVacancy.save({validateBeforeSave:false});*/
+        res.status(201).json({message:'Created Ok',newJobSkill})
     } catch (error) {
         next(error)
     }

@@ -67,7 +67,7 @@ const userShema=new mongoose.Schema({
     user_skills: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'userSkill'
+          ref: 'jobSkill'
         }
       ],
     phase:[{

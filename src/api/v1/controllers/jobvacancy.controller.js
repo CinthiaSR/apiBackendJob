@@ -33,19 +33,23 @@ createVacancy=async(req,res,next)=>{
 getVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
-        const infoVacancy=await jobVacancy.findById(id).populate('applicants').populate('job_skills')
+        const infoVacancy=await jobVacancy.findById(id)
+                        .populate('applicants')
+                        .populate('job_skills')
         if(!infoVacancy){
             return res.status(404).send({message:'Vacancy not found!'})
         }
-        res.status(201).send(infoVacancy)
+        res.status(201).send({infoVacancy})
     } catch (error) {
         next(error)
     }
 }
+//actualiza el dataVacancy
 updateVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
         const bodyParams={...req.body}
+        console.log('bodyparams:..',bodyParams);
         const {token,deleteApplicant}= bodyParams;
 
         if(token){
