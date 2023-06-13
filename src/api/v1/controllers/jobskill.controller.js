@@ -19,9 +19,10 @@ getAllJobSkills=async(req,res,next)=>{
 //crear
 createJobSkill=async(req,res,next)=>{
     try {
-        const {vacancy,name,level}=req.body;
+        
+        const {name,level}=req.body;
         const newJobSkill=new jobSkill({
-            vacancy,name,level
+            name,level
         });
         await newJobSkill.save()
         /*const newSkillVacancy=await jobVacancy.findById({_id:newJobSkill.vacancy})
