@@ -43,7 +43,6 @@ const jobVacancyShema=new mongoose.Schema({
     job_skills: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'jobSkill',
-        require:true
     }],
 },{
     timestamps:true
