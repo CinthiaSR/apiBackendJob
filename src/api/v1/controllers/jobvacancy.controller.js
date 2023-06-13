@@ -49,6 +49,7 @@ updateVacancy=async(req,res,next)=>{
     try {
         const {id}=req.params
         const bodyParams={...req.body}
+        console.log('bodyparams:..',bodyParams);
         const {token,deleteApplicant}= bodyParams;
 
         if(token){
