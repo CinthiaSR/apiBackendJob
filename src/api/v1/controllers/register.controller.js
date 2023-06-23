@@ -24,15 +24,16 @@ createAccount= async(req,res,next)=>{
         })
        
         await register_user.save()
-        res.status(201).json({message:'Candidato creado!'})
+        //res.status(201).json({message:'Candidato creado!'})
         // res.status(201).send(emailToken)
 
         const accessToken = jwtServices.sign({ _id: register_user._id, role: register_user.role, email: register_user.email });
         const refreshToken = jwtServices.sign({ _id: register_user._id, role: register_user.role }, '1y', process.env.REFRESH_TOKEN);
         await RefreshToken.create({ token: refreshToken })
-        res.status(201).send({ access_token: accessToken,
-                                   refresh_token: refreshToken,
-                                   role:register_user.role, email:register_user.email })     
+        let tempUser = {...register_user._doc,accessToken};
+        delete tempUser._id;
+        delete tempUser.password;
+        res.status(201).json({...tempUser}); 
     } catch (error) {
         logger.error(error)
        next(error);
