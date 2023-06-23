@@ -19,14 +19,11 @@ getAllPhase=async(req,res,next)=>{
 }
 createPhase=async(req,res,next)=>{
     try {
-        const {username,vacancy,companyName,name,stage}=req.body;
+        const {name,stage}=req.body;
         const newPhase=new Phase({
-            username,vacancy,companyName,name,stage
+            name
         })
         await newPhase.save()
-        const newPhaseByUser=await User.findById({_id:newPhase.username})
-        newPhaseByUser.phase.push(newPhase)
-        await newPhaseByUser.save({validateBeforeSave:false})
         res.status(201).json({message:'Created Ok',newPhase})
     } catch (error) {
         next(error)
@@ -36,7 +33,7 @@ createPhase=async(req,res,next)=>{
 getPhase=async(req,res,next)=>{
     try {
         const {id}=req.params;
-        const infoPhase=await Phase.findById(id).populate('username').populate('vacancy').populate('companyName')
+        const infoPhase=await Phase.findById(id)
         if(!infoPhase){
             return res.status(404).send({message:'Phase not found!'})
         }else{

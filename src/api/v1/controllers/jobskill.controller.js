@@ -52,6 +52,8 @@ updateJobSkill=async(req,res,next)=>{
     try {
         const {id}=req.params;
         const bodyParams={...req.body}
+        console.log('id:..',id);
+        console.log('bodyParams:..',bodyParams);
         const updateJobSkill=await jobSkill.findByIdAndUpdate(id,bodyParams,{new:true})
         if(!updateJobSkill){
             return res.status(404).send({message:'Skill not found!'})
@@ -59,6 +61,7 @@ updateJobSkill=async(req,res,next)=>{
             res.status(201).json({message:'Updated Ok',updateJobSkill})
         }
     } catch (error) {
+        console.log('error:..',error);
         next(error)
     }
 
