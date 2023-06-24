@@ -7,3 +7,4 @@ export default express
 .post('/',registerController.createAccount)
 .post('/byCompany/',registerController.createAccountByCompany)
 .get('/:token',registerController.verificationEmail)
+.post('/sendAccessCode',registerController.sendAccesCode)

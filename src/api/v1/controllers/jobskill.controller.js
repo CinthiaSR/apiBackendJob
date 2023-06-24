@@ -10,23 +10,25 @@ getAllJobSkills=async(req,res,next)=>{
                 item:docs
             })
         })
-        const infoJobSkills= await jobSkill.find({}).populate('vacancy')
-        res.status(201).send(infoJobSkills)
+        // const infoJobSkills= await jobSkill.find({}).populate('vacancy')
+        // res.status(201).send(infoJobSkills)
     } catch (error) {
         next(error)
     }
 }
+//crear
 createJobSkill=async(req,res,next)=>{
     try {
-        const {vacancy,name,level}=req.body;
+        
+        const {name,level}=req.body;
         const newJobSkill=new jobSkill({
-            vacancy,name,level
+            name,level
         });
         await newJobSkill.save()
-        const newSkillVacancy=await jobVacancy.findById({_id:newJobSkill.vacancy})
+        /*const newSkillVacancy=await jobVacancy.findById({_id:newJobSkill.vacancy})
         newSkillVacancy.job_skills.push(newJobSkill)
-        await newSkillVacancy.save({validateBeforeSave:false});
-        res.status(201).send(newJobSkill)
+        await newSkillVacancy.save({validateBeforeSave:false});*/
+        res.status(201).json({message:'Created Ok',newJobSkill})
     } catch (error) {
         next(error)
     }
@@ -38,8 +40,9 @@ getJobSkill=async(req,res,next)=>{
         const infoJobSkill=await jobSkill.findById(id).populate('vacancy')
         if(!infoJobSkill){
             return res.status(404).send({message:'Skill not found'})
+        }else{
+            res.status(201).json({message:'Get Ok',infoJobSkill})
         }
-        res.status(201).send(infoJobSkill)
     } catch (error) {
         next(error)
     }
@@ -49,12 +52,16 @@ updateJobSkill=async(req,res,next)=>{
     try {
         const {id}=req.params;
         const bodyParams={...req.body}
+        console.log('id:..',id);
+        console.log('bodyParams:..',bodyParams);
         const updateJobSkill=await jobSkill.findByIdAndUpdate(id,bodyParams,{new:true})
         if(!updateJobSkill){
             return res.status(404).send({message:'Skill not found!'})
+        }else{
+            res.status(201).json({message:'Updated Ok',updateJobSkill})
         }
-        res.status(201).send(updateJobSkill)
     } catch (error) {
+        console.log('error:..',error);
         next(error)
     }
 
@@ -65,8 +72,9 @@ deleteJobSkill=async(req,res,next)=>{
         const deleteJob=await jobSkill.findByIdAndDelete(id);
         if(!deleteJob){
             return res.status(404).send({message:'Skill not found!'})
+        }else{
+            res.status(204).send({message:'Deleted!'})
         }
-        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }

@@ -11,23 +11,20 @@ getAllPhase=async(req,res,next)=>{
                 item:docs
             })
         })
-        const infoPhase=await Phase.find({}).populate('username').populate('vacancy').populate('companyName')
-        res.status(201).send(infoPhase)
+        // const infoPhase=await Phase.find({}).populate('username').populate('vacancy').populate('companyName')
+        // res.status(201).send(infoPhase)
     } catch (error) {
         next(error)
     }
 }
 createPhase=async(req,res,next)=>{
     try {
-        const {username,vacancy,companyName,name,stage}=req.body;
+        const {name,stage}=req.body;
         const newPhase=new Phase({
-            username,vacancy,companyName,name,stage
+            name
         })
         await newPhase.save()
-        const newPhaseByUser=await User.findById({_id:newPhase.username})
-        newPhaseByUser.phase.push(newPhase)
-        await newPhaseByUser.save({validateBeforeSave:false})
-        res.status(201).send(newPhase)
+        res.status(201).json({message:'Created Ok',newPhase})
     } catch (error) {
         next(error)
     }
@@ -36,11 +33,12 @@ createPhase=async(req,res,next)=>{
 getPhase=async(req,res,next)=>{
     try {
         const {id}=req.params;
-        const infoPhase=await Phase.findById(id).populate('username').populate('vacancy').populate('companyName')
+        const infoPhase=await Phase.findById(id)
         if(!infoPhase){
             return res.status(404).send({message:'Phase not found!'})
+        }else{
+            res.status(201).json({message:'Get Ok',infoPhase})
         }
-        res.status(201).send(infoPhase)
     } catch (error) {
         next(error)
     }
@@ -53,8 +51,9 @@ updatePhase=async(req,res,next)=>{
         const infoPhase= await Phase.findByIdAndUpdate(id,bodyParams,{new:true})
         if(!infoPhase){
             return res.status(404).send({message:'Phase not found!'})
+        }else{
+            res.status(201).json({message:'Updated Ok',infoPhase})
         }
-        res.status(201).send(infoPhase)
     } catch (error) {
         next(error)
     }
@@ -66,8 +65,9 @@ deletePhase=async(req,res,next)=>{
         const infoPhase= await Phase.findByIdAndDelete(id)
         if(!infoPhase){
             return res.status(404).send({message:'Phase not found!'})
+        }else{
+            res.status(204).json({message:'Deleted!'})
         }
-        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }

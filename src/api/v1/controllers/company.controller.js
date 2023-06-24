@@ -9,8 +9,8 @@ export class CompanyController {
           items:docs
         })
       })
-      const infoCompanies = await Company.find()
-      .populate('username');
+      // const infoCompanies = await Company.find()
+      // .populate('username');
       res.status(201).send(infoCompanies);
     } catch (error) {
       next(error);
@@ -29,7 +29,7 @@ export class CompanyController {
       const user = await User.findById({ _id: newCompany.username });
       user.company_names.push(newCompany);
       await user.save({ validateBeforeSave: false });
-      res.status(201).send(newCompany);
+      res.status(201).json({message:'Create Ok',newCompany});
     } catch (error) {
       next(error);
     }
@@ -41,8 +41,9 @@ export class CompanyController {
         // const lastInfoCompany=await Company.find(infoCompany).populate('username')
         if(!infoCompany){
             return res.status(404).send({message:'Company not found'})
+        }else{
+          res.status(200).json({message:'Get Company ok',infoCompany})
         }
-        res.status(200).send(infoCompany)
     } catch (error) {
         next(error)
     }
@@ -54,8 +55,9 @@ export class CompanyController {
         const infoCompany= await Company.findByIdAndUpdate(id,bodyParams, {new:true})
         if(!infoCompany){
             return res.status(404).send({message:'Company not found!'})
+        }else{
+          res.status(201).json({message:'Get ok',infoCompany})
         }
-        res.status(201).send(infoCompany)
     } catch (error) {
         next(error)
     }
@@ -66,8 +68,9 @@ export class CompanyController {
         const infoCompany=await Company.findByIdAndDelete(id)
         if(!infoCompany){
             return res.status(404).send({message:'Company not found!'})
+        }else{
+          res.status(204).send({message:'Deleted!'})
         }
-        res.status(204).send({message:'Deleted!'})
     } catch (error) {
         next(error)
     }

@@ -2,10 +2,16 @@ import mongoose from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 const jobVacancyShema=new mongoose.Schema({
-    companyName: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        require:true
+    // companyName: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User',
+    //     require:true
+    // },
+    companyName:{
+        type:String
+    },
+    avatar_url:{
+        type: String
     },
     title:{
         type:String
@@ -26,12 +32,17 @@ const jobVacancyShema=new mongoose.Schema({
         type: String
     },
     status:{
-        type:String
+        type: String
     },
+    applicants:[
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User'
+        }
+      ],
     job_skills: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'jobSkills',
-        require:true
+        ref: 'jobSkill',
     }],
 },{
     timestamps:true
