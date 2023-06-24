@@ -2,6 +2,11 @@ import jobVacancy from "../models/jobvacancy.model";
 import Company from "../models/company.model";
 import User from "../models/user.model";
 import jwtServices from "../../services/jwt.services";
+import fs from 'fs'
+import { uploadOneFileToBucket } from "../lib/awsLib";
+import { mainDir } from "../../..";
+
+const {AWS_BUCKETNAME}=process.env;
 export class jobVacancyController{
 getAllJobVacancy=async(req,res,next)=>{
     try {
@@ -20,9 +25,9 @@ getAllJobVacancy=async(req,res,next)=>{
 createVacancy=async(req,res,next)=>{
     //console.log('dataFront:..',req.body);
     try {
-        const {companyName, title, type,mode,city,salary, activities,status, job_skills}=req.body;
+        const {companyName, avatar_url,title, type,mode,city,salary, activities,status, job_skills}=req.body;
         const newVacancy=new jobVacancy({
-            companyName, title, type,mode,city,salary, activities,status,job_skills
+            companyName, avatar_url, title, type,mode,city,salary, activities,status,job_skills
         })
         await newVacancy.save()
         res.status(201).json({message:'Created Ok',newVacancy})
@@ -46,14 +51,13 @@ getVacancy=async(req,res,next)=>{
 }
 //actualiza el dataVacancy
 updateVacancy=async(req,res,next)=>{
+    let objRes={}
     try {
         const {id}=req.params
         const bodyParams={...req.body}
         console.log('id:..',id);
         console.log('bodyparams:..',bodyParams);
-
         const {token,deleteApplicant}= bodyParams;
-
         if(token){
             const { _id } = await jwtServices.verify(bodyParams.token);
             const retriveDataVacancie = await jobVacancy.findById(id);
@@ -75,13 +79,44 @@ updateVacancy=async(req,res,next)=>{
             }
             
         }
-      
-        const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
-        //console.log('infoVacancy',infoVacancy);
-        if(!infoVacancy){
-            return res.status(404).send({message:'Vacancy not found!'})
+
+        // -------------------------------------- update Image
+        const file=req?.files?.image
+        objRes={
+            bodyParams, file
         }
-        res.status(201).send(infoVacancy)
+        if(file){
+            const responseUploadFile =await uploadOneFileToBucket(file,id);
+            if(responseUploadFile){
+                bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${id}/${file.name}`;
+                const updateVacancy = await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true});
+                if(!updateVacancy){
+                    res.status(404).send({message:'Vacancy not found'})
+                }else{
+                    res.status(201).json({message:"Updated!", updateVacancy})
+                }
+                fs.unlink(`${mainDir}/${file.tempFilePath}`,function(err){
+                    if(err){
+                        console.log(err)
+                    }else{
+                        console.log('Successfully deleted the file!')
+                    }
+                })
+            }
+        }else{
+            const updateVacancy = await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true});
+            if(!updateVacancy){
+                res.status(404).send({message:'Vacancy not found'})
+            }else{
+                res.status(201).json({message:"Updated!", updateVacancy})
+            }
+        }
+        // -------------------------- end image
+    //     const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
+    //     if(!infoVacancy){
+    //         return res.status(404).send({message:'Vacancy not found!'})
+    //     }
+    //     res.status(201).send(infoVacancy)
     } catch (error) {
         console.log(error);
         next(error)
