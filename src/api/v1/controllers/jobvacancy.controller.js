@@ -23,7 +23,7 @@ getAllJobVacancy=async(req,res,next)=>{
     }
 }
 createVacancy=async(req,res,next)=>{
-    //console.log('dataFront:..',req.body);
+    console.log('dataFront:..',req.body);
     try {
         const {companyName, avatar_url,title, type,mode,city,salary, activities,status, job_skills}=req.body;
         const newVacancy=new jobVacancy({
@@ -87,6 +87,7 @@ updateVacancy=async(req,res,next)=>{
         }
         if(file){
             const responseUploadFile =await uploadOneFileToBucket(file,id);
+            console.log('responseUploadFile:..',responseUploadFile);
             if(responseUploadFile){
                 bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${id}/${file.name}`;
                 const updateVacancy = await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true});
