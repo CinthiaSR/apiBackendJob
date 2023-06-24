@@ -16,22 +16,53 @@ getAllJobVacancy=async(req,res,next)=>{
                 item:docs
             })
         })
-        // const vacancies=await jobVacancy.find({}).populate('companyName')
-        // res.status(201).send(vacancies);
     } catch (error) {
         next(error)
     }
 }
 createVacancy=async(req,res,next)=>{
-    console.log('dataFront:..',req.body);
+    let objRes={}
     try {
+        // ----------------------------------- ADD AVATAR_URL
         const {companyName, avatar_url,title, type,mode,city,salary, activities,status, job_skills}=req.body;
-        const newVacancy=new jobVacancy({
-            companyName, avatar_url, title, type,mode,city,salary, activities,status,job_skills
-        })
-        await newVacancy.save()
-        res.status(201).json({message:'Created Ok',newVacancy})
+        const bodyParams={...req.body}
+        const file=req?.files?.image
+        objRes={
+            bodyParams, file
+        }
+        if(file){
+            const responseUploadFile=await uploadOneFileToBucket(file)
+            if(responseUploadFile){
+                bodyParams.avatar_url=`https://${AWS_BUCKETNAME}.s3.amazonaws.com/${file.name}`
+                const newVacancy=new jobVacancy({
+                    companyName, avatar_url, title, type,mode,city,salary, activities,status,job_skills
+                })
+                if(newVacancy){
+                    await newVacancy.save()
+                    res.status(201).json({message:'Created Ok',newVacancy})
+                }else{
+                    res.status(404).send({ message: "Not Created!" });
+                }
+                fs.unlink(`${mainDir}/${file.tempFilePath}`, function(err) {
+                    if (err) {
+                       console.log(err);
+                    } else {
+                      console.log("Successfully deleted the file.")
+                    }
+                  })
+            }
+    
+        }else{
+            console.log('Falto imagen', file)
+        //     const newVacancy=new jobVacancy({
+        //     companyName, avatar_url, title, type,mode,city,salary, activities,status,job_skills
+        // })
+        // await newVacancy.save()
+        // res.status(201).json({message:'Created Ok',newVacancy})
+        }
+        
     } catch (error) {
+        console.log(error)
         next(error)
     }
 }
