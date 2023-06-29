@@ -18,8 +18,6 @@ const userShema=new mongoose.Schema({
     },
     rfc: {
         type: String,
-    //     // required:true,
-    //     // unique: true
     },
     role: {
         type: String,

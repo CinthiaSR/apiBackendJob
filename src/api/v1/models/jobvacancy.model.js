@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 const jobVacancyShema=new mongoose.Schema({
-    // companyName: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User',
-    //     require:true
-    // },
     companyName:{
         type:String
     },
