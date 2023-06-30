@@ -12,14 +12,17 @@ const { AWS_BUCKETNAME } = process.env;
 
 export class UserController {
   getAllUser = async (req, res, next) => {
+    console.log('Recuperando datos de los usuarios:..')
     try {
       const { page = 1, limit = 10 } = req.query;
       await User.paginate({}, req.body, (err, docs) => {
+        console.log(docs);
         res.send({
           item: docs,
         });
       });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   };
