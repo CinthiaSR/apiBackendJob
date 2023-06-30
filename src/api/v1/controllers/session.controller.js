@@ -10,6 +10,7 @@ import RefreshToken from '../models/refreshToken'
 
 export class SessionController {
   login=async(request, response, next)=>{
+    console.log('Iniciando Login:...')
     try {
       const { email, password } = request.body
       // check if email exists
@@ -32,9 +33,10 @@ export class SessionController {
       let tempUser = {...user._doc,accessToken};
       delete tempUser._id;
       delete tempUser.password;
-
+      console.log(tempUser);
       response.status(201).json(tempUser);
     } catch (error) {
+      console.log(error);
       next(error)
     }
   }
