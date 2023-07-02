@@ -2,17 +2,14 @@ import User from "../models/user.model";
 import jwtServices from "../../services/jwt.services";
 import fs from "fs";
 import { uploadOneFileToBucket } from "../lib/awsLib";
-import { mainDir } from "../../.."; 
-import bcrypt from 'bcrypt'
-
+import { mainDir } from "../../..";
+import bcrypt from "bcrypt";
 
 const { AWS_BUCKETNAME } = process.env;
 
-
-
 export class UserController {
   getAllUser = async (req, res, next) => {
-    console.log('Recuperando datos de los usuarios:..')
+    console.log("Recuperando datos de los usuarios:..");
     try {
       const { page = 1, limit = 10 } = req.query;
       await User.paginate({}, req.body, (err, docs) => {
@@ -88,13 +85,13 @@ export class UserController {
   // aqui se actualiza el perfil del usuario
   updateUser = async (req, res, next) => {
     let objRes = {};
-    console.log('Actualizando dataUser(2):..',req.body);
-//debuging 1
+    console.log("Actualizando dataUser(2):..", req.body);
+    //debuging 1
     try {
-      const { token } = req.params; 
+      const { token } = req.params;
       const { _id, role, password } = await jwtServices.verify(token);
       const bodyParams = { ...req.body };
-      
+
       //console.log('Array de skills:..',bodyParams.user_skills,'tipo de dato de user_skills', typeof bodyParams.user_skills)
       const file = req?.files?.image;
       /*objRes={
@@ -103,14 +100,14 @@ export class UserController {
       }
       console.log(objRes);
       res.status(200).json(objRes);*/
-      if(bodyParams?.password!==''&&bodyParams?.password!==undefined){
+      if (bodyParams?.password !== "" && bodyParams?.password !== undefined) {
         const tempPass = bodyParams.password;
-        const hashedPassword=await bcrypt.hash(tempPass,10)
+        const hashedPassword = await bcrypt.hash(tempPass, 10);
         bodyParams.password = hashedPassword;
-      }else{
-        bodyParams.password=password
+      } else {
+        bodyParams.password = password;
       }
-      
+
       objRes = {
         bodyParams,
         file,
@@ -124,25 +121,29 @@ export class UserController {
             new: true,
           });
           if (!updateUser) {
-             res.status(404).send({ message: "User not found!" });
+            res.status(404).send({ message: "User not found!" });
           } else {
+            delete updateUser.password;
+            delete updateUser._id;
             res.status(201).json({ message: "Update User Ok", updateUser });
           }
-          fs.unlink(`${mainDir}/${file.tempFilePath}`, function(err) {
+          fs.unlink(`${mainDir}/${file.tempFilePath}`, function (err) {
             if (err) {
-               console.log(err);
+              console.log(err);
             } else {
-              console.log("Successfully deleted the file.")
+              console.log("Successfully deleted the file.");
             }
-          })
+          });
         }
       } else {
         const updateUser = await User.findByIdAndUpdate(_id, bodyParams, {
           new: true,
         });
         if (!updateUser) {
-           res.status(404).send({ message: "User not found!" });
+          res.status(404).send({ message: "User not found!" });
         } else {
+          delete updateUser.password;
+          delete updateUser._id;
           res.status(201).json({ message: "Update User Ok", updateUser });
         }
       }
