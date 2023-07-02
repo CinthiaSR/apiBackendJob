@@ -12,7 +12,7 @@ export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
     try {
       const page=parseInt(req.query.page)||1;
-      const per_page=parseInt(req.query.per_page);
+      const per_page=parseInt(req.query.per_page)||10;
       const skip= (page-1)*per_page
       const vacancies = await jobVacancy.find({})
                     .populate('applicants')
