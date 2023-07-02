@@ -5,17 +5,28 @@ import jwtServices from "../../services/jwt.services";
 import fs from "fs";
 import { uploadOneFileToBucket } from "../lib/awsLib";
 import { mainDir } from "../../..";
+import { request } from "http";
 
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
     try {
-      const { page = 1, limit = 10 } = req.body;
-      await jobVacancy.paginate({}, req.body, (err, docs) => {
-        res.send({
-          item: docs,
-        });
-      });
+      const page=parseInt(req.query.page)||1;
+      const per_page=parseInt(req.query.per_page);
+      const skip= (page-1)*per_page
+      const vacancies = await jobVacancy.find({})
+                    .populate('applicants')
+                    .populate('job_skills')
+                    .sort({createAt:'desc'})
+                    .skip(skip)
+                    .limit(per_page)
+      res.status(200).send(vacancies)
+      // const { page, limit } = req.body;
+      // await jobVacancy.paginate({}, req.params, (err, docs) => {
+      //   res.send({
+      //     item: docs,
+      //   });
+      // });
     } catch (error) {
       next(error);
     }
