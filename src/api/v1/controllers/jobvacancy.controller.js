@@ -5,17 +5,40 @@ import jwtServices from "../../services/jwt.services";
 import fs from "fs";
 import { uploadOneFileToBucket } from "../lib/awsLib";
 import { mainDir } from "../../..";
+import { request } from "http";
 
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
     try {
-      const { page = 1, limit = 10 } = req.body;
-      await jobVacancy.paginate({}, req.body, (err, docs) => {
-        res.send({
+      /* const page=parseInt(req.query.page)||1;
+      const per_page=parseInt(req.query.per_page);
+      const skip= (page-1)*per_page */
+
+      const { page, limit } = req.query;
+
+      const query = {};
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "asc" },
+        populate: "applicants",
+        populate: 'job_skills',
+      };
+
+      await jobVacancy.paginate(query, options, (err, docs) => {
+        res.status(200).send({
           item: docs,
         });
       });
+
+      /* const vacancies = await jobVacancy.find({})
+                    .populate('applicants')
+                    .populate('job_skills')
+                    .sort({createAt:'desc'})
+                    .skip(skip)
+                    .limit(per_page) */
+      //res.status(200).send(vacancies)
     } catch (error) {
       next(error);
     }
@@ -47,19 +70,22 @@ export class jobVacancyController {
         ...bodyParams,
       });
       await newVacancy.save();
-      const {_id} = newVacancy;
+      const { _id } = newVacancy;
       if (file) {
-        const responseUploadFile = await uploadOneFileToBucket(file,_id);
+        const responseUploadFile = await uploadOneFileToBucket(file, _id);
         if (responseUploadFile) {
           bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${_id}/${file.name}`;
-          const updatedVacancy= await jobVacancy.findByIdAndUpdate({_id:_id},{...bodyParams},{new:true})
-          
+          const updatedVacancy = await jobVacancy.findByIdAndUpdate(
+            { _id: _id },
+            { ...bodyParams },
+            { new: true }
+          );
+
           if (updatedVacancy) {
-            
             res.status(201).json({ message: "Created Ok", updatedVacancy });
           } else {
             res.status(404).send({ message: "Not Created!" });
-          } 
+          }
           fs.unlink(`${mainDir}/${file.tempFilePath}`, function (err) {
             if (err) {
               console.log(err);
