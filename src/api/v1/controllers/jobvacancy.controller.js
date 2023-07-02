@@ -11,22 +11,31 @@ const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
     try {
-      const page=parseInt(req.query.page)||1;
-      const per_page=parseInt(req.query.per_page)||10;
-      const skip= (page-1)*per_page
-      const vacancies = await jobVacancy.find({})
+    
+      const { page, limit } = req.query;
+
+      const query = {};
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "asc" },
+        populate: "applicants",
+        populate: 'job_skills',
+      };
+
+      await jobVacancy.paginate(query, options, (err, docs) => {
+        res.status(200).send({
+          item: docs,
+        });
+      });
+
+      /* const vacancies = await jobVacancy.find({})
                     .populate('applicants')
                     .populate('job_skills')
                     .sort({createAt:'desc'})
                     .skip(skip)
-                    .limit(per_page)
-      res.status(200).send(vacancies)
-      // const { page, limit } = req.body;
-      // await jobVacancy.paginate({}, req.params, (err, docs) => {
-      //   res.send({
-      //     item: docs,
-      //   });
-      // });
+                    .limit(per_page) */
+      //res.status(200).send(vacancies)
     } catch (error) {
       next(error);
     }
