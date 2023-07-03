@@ -23,6 +23,34 @@ export class UserController {
       next(error);
     }
   };
+  getAllUsersInVacancy = async (req,res, next)=>{
+    try {
+      const { id } = req.params;
+      console.log('idVacancie:..',id);
+      const { page, limit } = req.query;
+
+      const query = {
+        my_vacancies: `${id}` 
+      };
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "asc" },
+        populate: "user_skills",
+      };
+
+      await User.paginate(query, options, (err, docs) => {
+        console.log(docs);
+        res.status(200).send({
+          item: docs,
+        });
+      });
+
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
   createUser = async (req, res, next) => {
     try {
       const {
@@ -69,6 +97,31 @@ export class UserController {
         .populate("my_vacancies")
         .populate("user_skills")
         .populate("feedback");
+      if (!user) {
+        res.status(404).send({
+          error: "No se encontro ningun registro en la base de datos",
+        });
+      } else {
+        delete user._id;
+        delete user.password;
+        res.status(200).json({ message: "Get User ok", user });
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
+  getUserById = async (req, res, next) => {
+    
+    try {
+      const { id } = req.params;
+      console.log('Consultando user:..',id);
+
+      const user = await User.findById(id)
+        /* .populate("phase")
+        .populate("company_names")
+        .populate("my_vacancies")
+        .populate("user_skills")
+        .populate("feedback"); */
       if (!user) {
         res.status(404).send({
           error: "No se encontro ningun registro en la base de datos",
