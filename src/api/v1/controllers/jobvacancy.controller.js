@@ -43,8 +43,12 @@ export class jobVacancyController {
   createVacancy = async (req, res, next) => {
     let objRes = {};
     try {
+      const {token}=req.params;
+      const {_id}=await jwtServices.verify(token)
+
       // ----------------------------------- ADD AVATAR_URL
       const {
+        username,
         companyName,
         avatar_url,
         title,
@@ -56,7 +60,7 @@ export class jobVacancyController {
         status,
         job_skills,
       } = req.body;
-      const bodyParams = { ...req.body };
+      const bodyParams = { ...req.body,username:_id };
       console.log("bodyParams:..", bodyParams);
       const file = req?.files?.image;
       objRes = {
@@ -67,12 +71,18 @@ export class jobVacancyController {
         ...bodyParams,
       });
       await newVacancy.save();
-      const {_id} = newVacancy;
+      const user= await User.findById({_id:_id});
+      user.company_names.push(newVacancy)
+      await user.save({validateBeforeSave:false})
+      // res.status(201).json({message:'Create Ok',newVacancy});
+      // const {} = newVacancy;
+      const id= newVacancy._id
+      console.log('id vacancy',id)
       if (file) {
-        const responseUploadFile = await uploadOneFileToBucket(file,_id);
+        const responseUploadFile = await uploadOneFileToBucket(file,id);
         if (responseUploadFile) {
-          bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${_id}/${file.name}`;
-          const updatedVacancy= await jobVacancy.findByIdAndUpdate({_id:_id},{...bodyParams},{new:true})
+          bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${id}/${file.name}`;
+          const updatedVacancy= await jobVacancy.findByIdAndUpdate({_id:id},{...bodyParams},{new:true})
           
           if (updatedVacancy) {
             
@@ -90,11 +100,6 @@ export class jobVacancyController {
         }
       } else {
         console.log("Falto imagen", file);
-        //     const newVacancy=new jobVacancy({
-        //     companyName, avatar_url, title, type,mode,city,salary, activities,status,job_skills
-        // })
-        // await newVacancy.save()
-        // res.status(201).json({message:'Created Ok',newVacancy})
       }
     } catch (error) {
       console.log(error);

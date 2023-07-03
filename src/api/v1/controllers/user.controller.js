@@ -11,8 +11,14 @@ export class UserController {
   getAllUser = async (req, res, next) => {
     console.log("Recuperando datos de los usuarios:..");
     try {
-      const { page = 1, limit = 10 } = req.query;
-      await User.paginate({}, req.body, (err, docs) => {
+      const { page, limit } = req.query;
+      const query={}
+      const options={
+        page:page,
+        limit:limit,
+        sort: { createdAt: "asc" }
+      }
+      await User.paginate(query, options, (err, docs) => {
         console.log(docs);
         res.send({
           item: docs,
