@@ -31,7 +31,7 @@ export class UserController {
   };
   getAllUsersInVacancy = async (req,res, next)=>{
     try {
-      const { id } = req.params;
+      const { id } = req.params; 
       console.log('idVacancie:..',id);
       const { page, limit } = req.query;
 
