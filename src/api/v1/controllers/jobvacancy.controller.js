@@ -108,7 +108,7 @@ export class jobVacancyController {
   };
   getVacancy = async (req, res, next) => {
     try {
-      
+      const {id}=req.params;
       const infoVacancy = await jobVacancy
         .findById(id)
         .populate("applicants")
