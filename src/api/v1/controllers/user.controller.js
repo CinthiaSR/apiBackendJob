@@ -92,6 +92,27 @@ export class UserController {
       next(error);
     }
   };
+  getSkillsInUser= async(req,res,next)=>{
+    try {
+      const { token } = req.params;
+      const { _id } = await jwtServices.verify(token);
+      console.log('dataQuery:..',req.query);
+      
+      const user = await User.findById(_id).populate("user_skills")
+      if (!user) {
+        res.status(404).send({
+          error: "No se encontro ningun registro en la base de datos",
+        });
+      } else {
+        delete user._id;
+        delete user.password;
+        res.status(200).json({ message: "Get User ok", user });
+      }
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
   getUser = async (req, res, next) => {
     try {
       const { token } = req.params;

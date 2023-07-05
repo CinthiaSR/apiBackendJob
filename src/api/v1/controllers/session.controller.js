@@ -11,8 +11,10 @@ import RefreshToken from '../models/refreshToken'
 export class SessionController {
   login=async(request, response, next)=>{
     console.log('Iniciando Login:...')
+    console.log(request.body);
     try {
       const { email, password } = request.body
+      
       // check if email exists
       const user = await User.findOne({ email }).populate("phase")
       .populate("company_names")

@@ -9,6 +9,7 @@ export default express
 // .post('/',AuthMiddleware.auth,userController.createUser)
 .post('/',userController.createUser)
 .get('/getUser/:id',userController.getUserById)
+.get('/getSkillsInUser/:token',userController.getSkillsInUser)
 .get('/:token',AuthMiddleware.auth,userController.getUser)
 .patch('/:token',AuthMiddleware.auth,userController.updateUser)
 .delete('/:id',AuthMiddleware.auth,userController.deleteUser)
