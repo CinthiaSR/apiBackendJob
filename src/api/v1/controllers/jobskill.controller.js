@@ -4,14 +4,13 @@ export class jobSkillController{
 
 getAllJobSkills=async(req,res,next)=>{
     try {
-        const { page, limit } = req.query;
-        const query = {};
+        //const {page=1,limit=10}=req.query;
+        const filter= {};
         const options = {
-            page: page,
-            limit: limit,
-            sort: { createdAt: "asc" },
-        };
-        await jobSkill.paginate(query, options,(err,docs)=>{
+            page:req?.query?.page,
+            limit:req?.query?.limit
+        }
+        await jobSkill.paginate(filter,options,(err,docs)=>{
             res.send({
                 item:docs
             })
@@ -22,6 +21,9 @@ getAllJobSkills=async(req,res,next)=>{
         next(error)
     }
 }
+
+
+
 //crear
 
 // getAllSkillsByVacancy=async(req,res,next)=>{
