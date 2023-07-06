@@ -1,4 +1,5 @@
 import jobVacancy from "../models/jobvacancy.model";
+import jobSkill from "../models/jobskill.model";
 import Company from "../models/company.model";
 import User from "../models/user.model";
 import jwtServices from "../../services/jwt.services";
@@ -40,6 +41,45 @@ export class jobVacancyController {
       next(error);
     }
   };
+
+  getAllSkillsByVacancy=async(req,res,next)=>{
+    try {
+        const {id}=req.params;
+        console.log('idVacancie:..',id);
+        const { page, limit } = req.query;
+
+        const infoVacancy = await jobVacancy
+        .findById(id)
+        .populate("applicants")
+        .populate("job_skills");
+      if (!infoVacancy) {
+        return res.status(404).send({ message: "Vacancy not found!" });
+      }
+
+      const {job_skills}=infoVacancy
+      console.log(job_skills)
+      // const 
+      const query = {
+            job_skills: `${job_skills}` 
+        };
+        const options = {
+            page: page,
+            limit: limit,
+            sort: { createdAt: "asc" },
+          };
+
+          await jobSkill.paginate(query, options, (err, docs) => {
+            console.log(docs);
+            res.status(200).send({
+              item: docs,
+            });
+          });
+        
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+}
   createVacancy = async (req, res, next) => {
     let objRes = {};
     try {

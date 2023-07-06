@@ -5,6 +5,7 @@ import { validateForJobVacancy } from '../validators/jobVacancy.validator'
 export default express
 .Router()
 .get('/',jobvacancyController.getAllJobVacancy)
+.get('/getAllSkillsByVacancy/:id',jobvacancyController.getAllSkillsByVacancy)
 .post('/:token',AuthMiddleware.auth,jobvacancyController.createVacancy)
 .get('/:id',jobvacancyController.getVacancy)
 .patch('/:id',AuthMiddleware.auth,jobvacancyController.updateVacancy)
