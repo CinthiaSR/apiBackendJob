@@ -7,5 +7,5 @@ export default express
 .get('/',phaseController.getAllPhase)
 .post('/',AuthMiddleware.auth,phaseController.createPhase)
 .get('/:id',phaseController.getPhase)
-.patch('/:id',AuthMiddleware.auth,phaseController.updatePhase)
+.patch('/',AuthMiddleware.auth,phaseController.updatePhase)
 .delete('/:id',AuthMiddleware.auth,phaseController.deletePhase)

@@ -59,7 +59,8 @@ const userShema=new mongoose.Schema({
     my_vacancies: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'jobVacancy'
+        ref: 'jobVacancy',
+        
       }
     ], 
     user_skills: [
