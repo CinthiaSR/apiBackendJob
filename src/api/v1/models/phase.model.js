@@ -6,7 +6,19 @@ const phaseSchema=new Schema({
     },
     stage:{
         type:String
-    }
+    },
+    vacancies:[{
+        idVacancie: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'jobVacancy'
+          },
+        applicants:[
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ]
+    }]
 
 },{
     timestamps:true
