@@ -12,7 +12,6 @@ const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
     try {
-    
       const { page, limit } = req.query;
 
       const query = {};
@@ -21,7 +20,7 @@ export class jobVacancyController {
         limit: limit,
         sort: { createdAt: "asc" },
         populate: "applicants",
-        populate: 'job_skills',
+        populate: "job_skills",
       };
 
       await jobVacancy.paginate(query, options, (err, docs) => {
@@ -83,8 +82,8 @@ export class jobVacancyController {
   createVacancy = async (req, res, next) => {
     let objRes = {};
     try {
-      const {token}=req.params;
-      const {_id}=await jwtServices.verify(token)
+      const { token } = req.params;
+      const { _id } = await jwtServices.verify(token);
 
       // ----------------------------------- ADD AVATAR_URL
       const {
@@ -100,7 +99,7 @@ export class jobVacancyController {
         status,
         job_skills,
       } = req.body;
-      const bodyParams = { ...req.body,username:_id };
+      const bodyParams = { ...req.body, username: _id };
       console.log("bodyParams:..", bodyParams);
       const file = req?.files?.image;
       objRes = {
@@ -111,25 +110,28 @@ export class jobVacancyController {
         ...bodyParams,
       });
       await newVacancy.save();
-      const user= await User.findById({_id:_id});
-      user.company_names.push(newVacancy)
-      await user.save({validateBeforeSave:false})
+      const user = await User.findById({ _id: _id });
+      user.company_names.push(newVacancy);
+      await user.save({ validateBeforeSave: false });
       // res.status(201).json({message:'Create Ok',newVacancy});
       // const {} = newVacancy;
-      const id= newVacancy._id
-      console.log('id vacancy',id)
+      const id = newVacancy._id;
+      console.log("id vacancy", id);
       if (file) {
-        const responseUploadFile = await uploadOneFileToBucket(file,id);
+        const responseUploadFile = await uploadOneFileToBucket(file, id);
         if (responseUploadFile) {
           bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${id}/${file.name}`;
-          const updatedVacancy= await jobVacancy.findByIdAndUpdate({_id:id},{...bodyParams},{new:true})
-          
+          const updatedVacancy = await jobVacancy.findByIdAndUpdate(
+            { _id: id },
+            { ...bodyParams },
+            { new: true }
+          );
+
           if (updatedVacancy) {
-            
             res.status(201).json({ message: "Created Ok", updatedVacancy });
           } else {
             res.status(404).send({ message: "Not Created!" });
-          } 
+          }
           fs.unlink(`${mainDir}/${file.tempFilePath}`, function (err) {
             if (err) {
               console.log(err);
@@ -148,7 +150,7 @@ export class jobVacancyController {
   };
   getVacancy = async (req, res, next) => {
     try {
-      const {id}=req.params;
+      const { id } = req.params;
       const infoVacancy = await jobVacancy
         .findById(id)
         .populate("applicants")
@@ -246,6 +248,25 @@ export class jobVacancyController {
       next(error);
     }
   };
+  updateListApplicantsInVacancie = async (req, res, next) => {
+    const { idCandidate, idVacancy } = req.body;
+    try {
+      const result = await jobVacancy.findByIdAndUpdate(
+        { _id: idVacancy },
+        {
+          $pull: { applicants: idCandidate },
+          $addToSet: { rejecteds: idCandidate },
+        },
+        { new: true }
+      );
+      console.log(result);
+      res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
   deleteVacancy = async (req, res, next) => {
     try {
       const { id } = req.params;
