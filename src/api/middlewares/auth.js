@@ -19,10 +19,13 @@ export class AuthMiddleware {
     // Apply middleman auth in 
     const token = authHeader.split(' ')[1];
     //console.log('authHeader:..',authHeader);
+    console.log('token:..',token);
 
     // Step 4: Verify token
     try {
-        const { _id, role } = await jwtServices.verify(token);
+        const temResponse = await jwtServices.verify(token);
+        console.log('tempResponse Verify:..',temResponse);
+        const { _id, role } = temResponse;
         const user = { _id, role }
         request.user = user; 
         // Setting user on req, so we can valid token user in usersController

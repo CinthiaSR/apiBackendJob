@@ -6,6 +6,7 @@ export default express
 .Router()
 .get('/',jobvacancyController.getAllJobVacancy)
 .post('/:token',AuthMiddleware.auth,jobvacancyController.createVacancy)
+.post('/updateListApplicantsInVacancie',AuthMiddleware.auth,jobvacancyController.updateListApplicantsInVacancie)
 .get('/:id',jobvacancyController.getVacancy)
 .patch('/:id',AuthMiddleware.auth,jobvacancyController.updateVacancy)
 .delete('/:id',AuthMiddleware.auth,jobvacancyController.deleteVacancy)
