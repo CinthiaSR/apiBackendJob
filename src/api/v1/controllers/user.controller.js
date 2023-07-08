@@ -219,7 +219,8 @@ export class UserController {
       } else {
         const updateUser = await User.findByIdAndUpdate(_id, bodyParams, {
           new: true,
-        });
+        }).populate("my_vacancies")
+        .populate("user_skills");;
         if (!updateUser) {
           res.status(404).send({ message: "User not found!" });
         } else {
