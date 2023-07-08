@@ -199,7 +199,8 @@ export class UserController {
           bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${_id}/${file.name}`;
           const updateUser = await User.findByIdAndUpdate(_id, bodyParams, {
             new: true,
-          });
+          }).populate("my_vacancies")
+          .populate("user_skills");
           if (!updateUser) {
             res.status(404).send({ message: "User not found!" });
           } else {
@@ -218,7 +219,8 @@ export class UserController {
       } else {
         const updateUser = await User.findByIdAndUpdate(_id, bodyParams, {
           new: true,
-        });
+        }).populate("my_vacancies")
+        .populate("user_skills");;
         if (!updateUser) {
           res.status(404).send({ message: "User not found!" });
         } else {
