@@ -12,12 +12,12 @@ export class UserController {
     console.log("Recuperando datos de los usuarios:..");
     try {
       const { page, limit } = req.query;
-      const query={}
-      const options={
-        page:page,
-        limit:limit,
-        sort: { createdAt: "asc" }
-      }
+      const query = {};
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "asc" },
+      };
       await User.paginate(query, options, (err, docs) => {
         console.log(docs);
         res.send({
@@ -29,14 +29,14 @@ export class UserController {
       next(error);
     }
   };
-  getAllUsersInVacancy = async (req,res, next)=>{
+  getAllUsersInVacancy = async (req, res, next) => {
     try {
-      const { id } = req.params; 
-      console.log('idVacancie:..',id);
+      const { id } = req.params;
+      console.log("idVacancie:..", id);
       const { page, limit } = req.query;
 
       const query = {
-        my_vacancies: `${id}` 
+        my_vacancies: `${id}`,
       };
       const options = {
         page: page,
@@ -51,12 +51,11 @@ export class UserController {
           item: docs,
         });
       });
-
     } catch (error) {
       console.log(error);
       next(error);
     }
-  }
+  };
   createUser = async (req, res, next) => {
     try {
       const {
@@ -92,13 +91,13 @@ export class UserController {
       next(error);
     }
   };
-  getSkillsInUser= async(req,res,next)=>{
+  getSkillsInUser = async (req, res, next) => {
     try {
       const { token } = req.params;
       const { _id } = await jwtServices.verify(token);
-      console.log('dataQuery:..',req.query);
-      
-      const user = await User.findById(_id).populate("user_skills")
+      console.log("dataQuery:..", req.query);
+
+      const user = await User.findById(_id).populate("user_skills");
       if (!user) {
         res.status(404).send({
           error: "No se encontro ningun registro en la base de datos",
@@ -112,7 +111,7 @@ export class UserController {
       console.log(error);
       next(error);
     }
-  }
+  };
   getUser = async (req, res, next) => {
     try {
       const { token } = req.params;
@@ -138,16 +137,17 @@ export class UserController {
     }
   };
   getUserById = async (req, res, next) => {
-    
     try {
       const { id } = req.params;
-      console.log('Consultando user:..',id);
+      console.log("Consultando user:..", id);
 
       const user = await User.findById(id)
-        /* .populate("phase")
-        .populate("company_names")
-        .populate("my_vacancies")
         .populate("user_skills")
+        .populate("my_vacancies");
+      /* .populate("phase")
+        .populate("company_names")
+        
+        
         .populate("feedback"); */
       if (!user) {
         res.status(404).send({
@@ -199,8 +199,9 @@ export class UserController {
           bodyParams.avatar_url = `https://${AWS_BUCKETNAME}.s3.amazonaws.com/${_id}/${file.name}`;
           const updateUser = await User.findByIdAndUpdate(_id, bodyParams, {
             new: true,
-          }).populate("my_vacancies")
-          .populate("user_skills");
+          })
+            .populate("my_vacancies")
+            .populate("user_skills");
           if (!updateUser) {
             res.status(404).send({ message: "User not found!" });
           } else {
@@ -219,8 +220,9 @@ export class UserController {
       } else {
         const updateUser = await User.findByIdAndUpdate(_id, bodyParams, {
           new: true,
-        }).populate("my_vacancies")
-        .populate("user_skills");;
+        })
+          .populate("my_vacancies")
+          .populate("user_skills");
         if (!updateUser) {
           res.status(404).send({ message: "User not found!" });
         } else {

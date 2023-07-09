@@ -6,6 +6,7 @@ import fs from "fs";
 import { uploadOneFileToBucket } from "../lib/awsLib";
 import { mainDir } from "../../..";
 import { request } from "http";
+import { sendRejectEmail } from "../lib/nodeMailer";
 
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
@@ -209,20 +210,30 @@ export class jobVacancyController {
     }
   };
   updateListApplicantsInVacancie = async (req, res, next) => {
-    const { idCandidate, idVacancy } = req.body;
+    const { idCandidate, idVacancy, emailUser } = req.body;
+    console.log('emailUser:..',emailUser);
     try {
-      const result = await jobVacancy.findByIdAndUpdate(
-        { _id: idVacancy },
+      
+       const result = await jobVacancy.findByIdAndUpdate(
+          { _id: idVacancy },
+          {
+            $pull: { applicants: idCandidate },
+            $addToSet: { rejecteds: idCandidate },
+          },
+          { new: true }
+        )
+      const updateUserMyVacancies= await User.findByIdAndUpdate(
+        {_id:idCandidate},
         {
-          $pull: { applicants: idCandidate },
-          $addToSet: { rejecteds: idCandidate },
+          $pull: { my_vacancies: idVacancy },
         },
         { new: true }
-      );
-      console.log(result);
-      res.status(200).json(result);
+      )
+       sendRejectEmail(emailUser);
+      //console.log('resultUpdate (jobVacancyController):..',{result,updateUserMyVacancies});
+      res.status(200).json({result,updateUserMyVacancies});
     } catch (error) {
-      console.log(error);
+      console.log('Error en JobVacancy:..',error);
       next(error);
     }
   };
