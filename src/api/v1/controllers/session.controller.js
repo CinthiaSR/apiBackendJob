@@ -35,7 +35,7 @@ export class SessionController {
       let tempUser = {...user._doc,accessToken};
       delete tempUser._id;
       delete tempUser.password;
-      console.log(tempUser);
+      //console.log(tempUser);
       response.status(201).json(tempUser);
     } catch (error) {
       console.log(error);
@@ -52,6 +52,7 @@ export class SessionController {
   
       response.status(200).send({ message: 'Good bye' })
     } catch (error) {
+      console.log(error);
       return next(new Error('Something went wrong in the database'))
     }
     // response.json({ message: 'Logout' })
