@@ -46,45 +46,54 @@ export class phaseController {
   };
   getPhase = async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const infoPhase = await Phase.findById(id);
+      //const { id } = req.params;
+      const { phase } = req.query;
+      const infoPhase = await Phase.findOne({ name: phase });
+      console.log("infoPase:..", infoPhase);
       if (!infoPhase) {
         return res.status(404).send({ message: "Phase not found!" });
       } else {
         res.status(201).json({ message: "Get Ok", infoPhase });
       }
     } catch (error) {
+      console.log("Error Phase:...", error);
       next(error);
     }
   };
   updatePhase = async (req, res, next) => {
     const { phase, idVacancie, idCandidate } = req.query;
     //const { _id } = await jwtServices.verify(tokenCandidate);
-    console.log('Iniciando Actualizacion de Phase:..',phase);
+    console.log(
+      "Iniciando Actualizacion de Phase:..",
+      phase,
+      idVacancie,
+      idCandidate
+    );
     try {
       const resultFind = await Phase.findOne({ name: phase });
       const dataVacancies = resultFind?.vacancies;
+      console.log("dataVacancies:..", dataVacancies);
       const findVacancieInPhase = dataVacancies.find(
         (item) => String(item.idVacancie) === idVacancie
       );
-      let tempDataVacancies = [];
-      let caso='ninguno';
+      let tempDataVacancies = [...dataVacancies];
+      let caso = "ninguno";
 
+      console.log("findVacancieInPhase:..", findVacancieInPhase);
       if (!findVacancieInPhase) {
-        caso='basico';
+        caso = "basico";
         tempDataVacancies.push({
           idVacancie: idVacancie,
           applicants: [idCandidate],
         });
       } else {
-        caso='secundario';
+        caso = "secundario";
         tempDataVacancies = dataVacancies.map((item) => {
           if (String(item.idVacancie) === idVacancie) {
-            
-            const tempObj= {...item};
-            let tempArray= [...item.applicants,idCandidate];
-            console.log('Nuevo array de datos:..',tempArray);
-            tempObj._doc.applicants=[...tempArray];
+            const tempObj = { ...item };
+            let tempArray = [...item.applicants, idCandidate];
+            console.log("Nuevo array de datos:..", tempArray);
+            tempObj._doc.applicants = [...tempArray];
             return tempObj;
           } else {
             return item;
@@ -106,7 +115,7 @@ export class phaseController {
         dataVacancies,
         resultUpdate,
         caso,
-        tempDataVacancies
+        tempDataVacancies,
       };
       /*
         const {id}=req.params;
@@ -120,6 +129,63 @@ export class phaseController {
       res.status(200).json(objRes);
     } catch (error) {
       console.log("Error UpdatePhase:...", error);
+      next(error);
+    }
+  };
+  updatePanel = async (req, res, next) => {
+    try {
+      const {
+        idVacancie,
+        listIdsApplicantsPhase1,
+        listIdsApplicantsPhase2,
+        listIdsApplicantsPhase3,
+        listIdsApplicantsPhase4,
+      } = req.body;
+      const phases = ["Llamada", "Entrevista", "Pruebas", "Contratado"];
+      const listas = [
+        listIdsApplicantsPhase1,
+        listIdsApplicantsPhase2,
+        listIdsApplicantsPhase3,
+        listIdsApplicantsPhase4,
+      ];
+
+      for (const phase of phases) {
+        const numList = phases.indexOf(phase);
+        const resFind = await Phase.findOne({ name: phase });
+        let tempVacancies = resFind.vacancies;
+        const isExistVacancy = tempVacancies.find(
+          (el) => String(el.idVacancie) === idVacancie
+        );
+        if (isExistVacancy) {
+          tempVacancies.forEach((item) => {
+            if (String(item.idVacancie) === idVacancie) {
+              item.applicants = [...listas[numList]];
+            }
+          });
+        } else {
+          tempVacancies = [
+            ...tempVacancies,
+            { idVacancie: idVacancie, applicants: [...listas[numList]] },
+          ];
+        }
+
+        await Phase.findOneAndUpdate(
+          { name: phase },
+          { vacancies: tempVacancies },
+          { new: true }
+        );
+      }
+
+      const objRes = {
+        idVacancie,
+        listIdsApplicantsPhase1,
+        listIdsApplicantsPhase2,
+        listIdsApplicantsPhase3,
+        listIdsApplicantsPhase4,
+      };
+      res.status(200).json(objRes);
+    } catch (error) {
+      console.log("Error UpdatePanel:...", error);
       next(error);
     }
   };
