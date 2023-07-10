@@ -4,7 +4,7 @@ import { validateCreateAccount,validByCompany } from '../validators/user.validat
 
 export default express
 .Router()
+.post('/sendAccessCode',registerController.sendAccesCode)
 .post('/byCompany/',registerController.createAccountByCompany)
 .get('/:token',registerController.verificationEmail)
-.post('/sendAccessCode',registerController.sendAccesCode)
 .post('/',registerController.createAccount)

@@ -77,6 +77,7 @@ export class RegisterController {
 
   sendAccesCode = async (req, res, next) => {
     const dataLogin = req.body;
+    console.log('dataLogin:..',dataLogin);
     let objRes = {
       msg: "Enviando AccessCode al email del usuario:..",
     };
