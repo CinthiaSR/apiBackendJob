@@ -24,7 +24,7 @@ export class jobVacancyController {
       };
 
       await jobVacancy.paginate(query, options, (err, docs) => {
-        res.status(200).send({
+        res.status(200).json({
           item: docs,
         });
       });
