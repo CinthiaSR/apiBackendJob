@@ -1,5 +1,7 @@
 // eslint-disable-next-line no-unused-vars, no-shadow
 
+
+
 export class AuthErrorHandler extends Error {
   constructor(status, msg) {
     super();
@@ -20,5 +22,8 @@ export class AuthErrorHandler extends Error {
 
 export default function errorHandler(err, req, res, next) {
   const errors = err.errors || [{ message: err.message }];
-  res.status(err.status || 500).json({ errors });
+  if(err.errors||err.message){
+    res.status(err.status || 500).json({ errors });
+  }
+  
 }
