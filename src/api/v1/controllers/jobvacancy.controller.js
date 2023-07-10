@@ -19,7 +19,7 @@ export class jobVacancyController {
       const options = {
         page: page,
         limit: limit,
-        sort: { createdAt: "asc" },
+        sort: { createdAt: "desc" },
         populate: "applicants",
         populate: "job_skills",
       };
