@@ -5,6 +5,7 @@ import {validateValuesForJobSkill}  from '../validators/jobSkill.validator'
 export default express
 .Router()
 .get('/',jobskillController.getAllJobSkills)
+.get('/getAllSkillsForVacancy',jobskillController.getAllSkillsForVacancy)
 .post('/',AuthMiddleware.auth,jobskillController.createJobSkill)
 .get('/:id',jobskillController.getJobSkill)
 .patch('/:id',AuthMiddleware.auth,jobskillController.updateJobSkill)

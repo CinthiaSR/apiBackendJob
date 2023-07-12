@@ -16,7 +16,7 @@ export class UserController {
       const options = {
         page: page,
         limit: limit,
-        sort: { createdAt: "asc" },
+        sort: { createdAt: "desc" },
       };
       await User.paginate(query, options, (err, docs) => {
         console.log(docs);
