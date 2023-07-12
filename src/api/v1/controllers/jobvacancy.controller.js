@@ -8,6 +8,7 @@ import { uploadOneFileToBucket } from "../lib/awsLib";
 import { mainDir } from "../../..";
 import { request } from "http";
 import { sendRejectEmail } from "../lib/nodeMailer";
+import { sendMailsCandidatesInVacancy } from "../lib/nodeMailer";
 
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
@@ -79,6 +80,46 @@ export class jobVacancyController {
       console.log(error);
       next(error);
     }
+}
+closeVacancy = async (req, res, next) => {
+  let objRes={};
+  try {
+    const {idVacancy,listIdsApplicants}= req.body;
+    
+    const resultCloseVacancy= await jobVacancy.findByIdAndUpdate({_id:idVacancy},{status:'Cerrado'},{new:true});
+    const vacancyTitle= resultCloseVacancy?.title;
+    objRes={
+      idVacancy,
+      listIdsApplicants,
+      resultCloseVacancy
+    }
+    
+    if(listIdsApplicants){
+      let listMailsCandidates =[]
+      for(let i=0;i<listIdsApplicants.length;i++){
+        const dataApplicant = await User.findById(listIdsApplicants[i]);
+        if(dataApplicant?.email){
+          listMailsCandidates.push(dataApplicant.email);
+        }
+      }
+      if(listMailsCandidates.length>0){
+        const stringMails = listMailsCandidates.toString();
+        const resultSendMails = await sendMailsCandidatesInVacancy(stringMails,vacancyTitle);
+        objRes={
+          ...objRes,
+          listMailsCandidates,
+          stringMails,
+          resultSendMails
+        }
+      }
+      
+    }
+    
+    res.status(200).json(objRes);
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
 }
   createVacancy = async (req, res, next) => {
     let objRes = {};
