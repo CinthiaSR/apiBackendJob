@@ -9,6 +9,7 @@ export default express
 .get('/getAllUserOutPaginate',userController.getAllUserOutPaginate)
 // .post('/',AuthMiddleware.auth,userController.createUser)
 .post('/',userController.createUser)
+.get('/getUserByEmail',userController.getUserByEmail)
 .get('/getUser/:id',userController.getUserById)
 .get('/getSkillsInUser/:token',userController.getSkillsInUser)
 .get('/:token',AuthMiddleware.auth,userController.getUser)

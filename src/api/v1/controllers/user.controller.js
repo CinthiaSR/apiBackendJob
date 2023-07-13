@@ -170,6 +170,31 @@ export class UserController {
       next(error);
     }
   };
+  getUserByEmail = async (req, res, next) => {
+    try {
+      const { email } = req.query;
+      console.log("Consultando user:..", email);
+
+      const user = await User.findOne({email})
+        
+      /* .populate("phase")
+        .populate("company_names")
+        
+        
+        .populate("feedback"); */
+      if (!user) {
+        res.status(404).send({
+          error: "No se encontro ningun registro en la base de datos",
+        });
+      } else {
+        delete user._id;
+        delete user.password;
+        res.status(200).json({ message: "Get User ok", user });
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
   // aqui se actualiza el perfil del usuario
   updateUser = async (req, res, next) => {
     let objRes = {};
