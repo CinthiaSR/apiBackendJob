@@ -6,6 +6,7 @@ export default express
 .Router()
 .get('/',userController.getAllUser)
 .get('/getAllUsersInVacancy/:id',userController.getAllUsersInVacancy)
+.get('/getAllUserOutPaginate',userController.getAllUserOutPaginate)
 // .post('/',AuthMiddleware.auth,userController.createUser)
 .post('/',userController.createUser)
 .get('/getUser/:id',userController.getUserById)

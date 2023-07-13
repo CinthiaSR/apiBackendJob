@@ -29,6 +29,14 @@ export class UserController {
       next(error);
     }
   };
+  getAllUserOutPaginate=async(req,res,next)=>{
+    try {
+        const getUser=await User.find({})
+        res.status(201).json(getUser)
+    } catch (error) {
+        next(error)
+    }
+}
   getAllUsersInVacancy = async (req, res, next) => {
     try {
       const { id } = req.params;

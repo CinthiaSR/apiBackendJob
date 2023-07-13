@@ -16,13 +16,16 @@ export class jobVacancyController {
     try {
       const { page, limit } = req.query;
 
-      const query = {};
+      const query = {
+        status:'Iniciado'
+      };
       const options = {
         page: page,
         limit: limit,
         sort: { createdAt: "desc" },
         populate: "applicants",
         populate: "job_skills",
+        // status:'Iniciado'
       };
 
       await jobVacancy.paginate(query, options, (err, docs) => {
