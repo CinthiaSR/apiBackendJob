@@ -13,6 +13,7 @@ import { sendMailsCandidatesInVacancy } from "../lib/nodeMailer";
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
+
     try {
       const { page, limit } = req.query;
 
@@ -42,6 +43,35 @@ export class jobVacancyController {
                     .limit(per_page) */
       //res.status(200).send(vacancies)
     } catch (error) {
+      next(error);
+    }
+  };
+
+  getAllJobVacancyByUser = async (req, res, next) => {
+    const { token } = req.params;
+      const { _id } = await jwtServices.verify(token);
+    try {
+      const { page, limit } = req.query;
+      const query = {
+        status:'Iniciado',
+        username:_id
+      };
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "desc" },
+        populate: "applicants",
+        populate: "job_skills",
+        // status:'Iniciado'
+      };
+
+      await jobVacancy.paginate(query, options, (err, docs) => {
+        res.status(200).json({
+          item: docs,
+        });
+      });
+    } catch (error) {
+      console.log(error)
       next(error);
     }
   };
