@@ -199,12 +199,19 @@ export class UserController {
   updateUser = async (req, res, next) => {
     let objRes = {};
     console.log("Actualizando dataUser(2):..", req.body);
+    
+
     //debuging 1
     try {
       const { token } = req.params;
       const { _id, role, password } = await jwtServices.verify(token);
       const bodyParams = { ...req.body };
-
+      const {working_experience}=bodyParams;
+      let tempArrarExp=[];
+      for (let exp of working_experience){
+        tempArrarExp.push(JSON.parse(exp));
+      }
+      bodyParams.working_experience=[...tempArrarExp];
       //console.log('Array de skills:..',bodyParams.user_skills,'tipo de dato de user_skills', typeof bodyParams.user_skills)
       const file = req?.files?.image;
       /*objRes={
