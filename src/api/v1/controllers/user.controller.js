@@ -16,7 +16,7 @@ export class UserController {
       const options = {
         page: page,
         limit: limit,
-        sort: { createdAt: "asc" },
+        sort: { createdAt: "desc" },
       };
       await User.paginate(query, options, (err, docs) => {
         console.log(docs);
@@ -29,6 +29,14 @@ export class UserController {
       next(error);
     }
   };
+  getAllUserOutPaginate=async(req,res,next)=>{
+    try {
+        const getUser=await User.find({})
+        res.status(201).json(getUser)
+    } catch (error) {
+        next(error)
+    }
+}
   getAllUsersInVacancy = async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -144,6 +152,31 @@ export class UserController {
       const user = await User.findById(id)
         .populate("user_skills")
         .populate("my_vacancies");
+      /* .populate("phase")
+        .populate("company_names")
+        
+        
+        .populate("feedback"); */
+      if (!user) {
+        res.status(404).send({
+          error: "No se encontro ningun registro en la base de datos",
+        });
+      } else {
+        delete user._id;
+        delete user.password;
+        res.status(200).json({ message: "Get User ok", user });
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
+  getUserByEmail = async (req, res, next) => {
+    try {
+      const { email } = req.query;
+      console.log("Consultando user:..", email);
+
+      const user = await User.findOne({email})
+        
       /* .populate("phase")
         .populate("company_names")
         

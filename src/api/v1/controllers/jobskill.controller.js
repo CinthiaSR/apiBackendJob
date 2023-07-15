@@ -22,9 +22,17 @@ getAllJobSkills=async(req,res,next)=>{
     }
 }
 
+getAllSkillsForVacancy=async(req,res,next)=>{
+    try {
+        const getAllSkills=await jobSkill.find({})
+        res.status(201).json({message:'Skill',getAllSkills})
+    } catch (error) {
+        next(error)
+    }
+}
 
 
-//crear
+
 createJobSkill=async(req,res,next)=>{
     try {
         

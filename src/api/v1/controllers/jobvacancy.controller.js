@@ -1,4 +1,5 @@
 import jobVacancy from "../models/jobvacancy.model";
+import jobSkill from "../models/jobskill.model";
 import Company from "../models/company.model";
 import User from "../models/user.model";
 import jwtServices from "../../services/jwt.services";
@@ -7,6 +8,7 @@ import { uploadOneFileToBucket } from "../lib/awsLib";
 import { mainDir } from "../../..";
 import { request } from "http";
 import { sendRejectEmail } from "../lib/nodeMailer";
+import { sendMailsCandidatesInVacancy } from "../lib/nodeMailer";
 
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
@@ -14,13 +16,16 @@ export class jobVacancyController {
     try {
       const { page, limit } = req.query;
 
-      const query = {};
+      const query = {
+        status:'Iniciado'
+      };
       const options = {
         page: page,
         limit: limit,
-        sort: { createdAt: "asc" },
+        sort: { createdAt: "desc" },
         populate: "applicants",
         populate: "job_skills",
+        // status:'Iniciado'
       };
 
       await jobVacancy.paginate(query, options, (err, docs) => {
@@ -40,6 +45,85 @@ export class jobVacancyController {
       next(error);
     }
   };
+
+  getAllSkillsByVacancy=async(req,res,next)=>{
+    try {
+        const {id}=req.params;
+        console.log('idVacancie:..',id);
+        const { page, limit } = req.query;
+
+        const infoVacancy = await jobVacancy
+        .findById(id)
+        .populate("applicants")
+        .populate("job_skills");
+      if (!infoVacancy) {
+        return res.status(404).send({ message: "Vacancy not found!" });
+      }
+
+      const {job_skills}=infoVacancy
+      console.log(job_skills)
+      // const 
+      const query = {
+            job_skills: `${job_skills}` 
+        };
+        const options = {
+            page: page,
+            limit: limit,
+            sort: { createdAt: "asc" },
+          };
+
+          await jobSkill.paginate(query, options, (err, docs) => {
+            console.log(docs);
+            res.status(200).send({
+              item: docs,
+            });
+          });
+        
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+}
+closeVacancy = async (req, res, next) => {
+  let objRes={};
+  try {
+    const {idVacancy,listIdsApplicants}= req.body;
+    
+    const resultCloseVacancy= await jobVacancy.findByIdAndUpdate({_id:idVacancy},{status:'Cerrado'},{new:true});
+    const vacancyTitle= resultCloseVacancy?.title;
+    objRes={
+      idVacancy,
+      listIdsApplicants,
+      resultCloseVacancy
+    }
+    
+    if(listIdsApplicants){
+      let listMailsCandidates =[]
+      for(let i=0;i<listIdsApplicants.length;i++){
+        const dataApplicant = await User.findById(listIdsApplicants[i]);
+        if(dataApplicant?.email){
+          listMailsCandidates.push(dataApplicant.email);
+        }
+      }
+      if(listMailsCandidates.length>0){
+        const stringMails = listMailsCandidates.toString();
+        const resultSendMails = await sendMailsCandidatesInVacancy(stringMails,vacancyTitle);
+        objRes={
+          ...objRes,
+          listMailsCandidates,
+          stringMails,
+          resultSendMails
+        }
+      }
+      
+    }
+    
+    res.status(200).json(objRes);
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
   createVacancy = async (req, res, next) => {
     let objRes = {};
     try {

@@ -21,11 +21,13 @@ export class SessionController {
       .populate("my_vacancies")
       .populate("user_skills")
       .populate("feedback");
+      console.log('result found User:...',user);
       if (!user) {
         return next(AuthErrorHandler.wrongCredentials())
       }
       // compare password
       const match = await bcrypt.compare(password, user.password)
+      console.log('result match Password:...',match);
       if (!match) {
         return next(AuthErrorHandler.wrongCredentials())
       }
