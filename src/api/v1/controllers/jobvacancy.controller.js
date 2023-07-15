@@ -174,7 +174,12 @@ closeVacancy = async (req, res, next) => {
         status,
         job_skills,
       } = req.body;
-      const bodyParams = { ...req.body, username: _id };
+      const bodyParams = { ...req.body, username: _id};
+      let tempArrTask=[]
+      for (let task of activities) {
+        tempArrTask.push(JSON.parse(task))
+      }
+      bodyParams.activities=[...tempArrTask]
       console.log("bodyParams:..", bodyParams);
       const file = req?.files?.image;
       objRes = {
@@ -247,6 +252,13 @@ closeVacancy = async (req, res, next) => {
       const bodyParams = { ...req.body };
       console.log("id:..", id);
       console.log("bodyparams:..", bodyParams);
+      const {activities}=bodyParams;
+      let tempArrarTask=[];
+      for (let task of activities){
+        tempArrarTask.push(JSON.parse(task));
+      }
+      bodyParams.activities=[...tempArrarTask];
+
       const { token, deleteApplicant } = bodyParams;
       if (token) {
         const { _id } = await jwtServices.verify(bodyParams.token);

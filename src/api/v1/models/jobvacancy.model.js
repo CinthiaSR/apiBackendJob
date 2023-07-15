@@ -28,9 +28,16 @@ const jobVacancyShema = new mongoose.Schema(
     salary: {
       type: String,
     },
-    activities: {
-      type: String,
-    },
+    activities:[
+      {
+        task: {
+          type: String,
+        }
+      },
+    ],
+    // activities: {
+    //   type: String,
+    // },
     status: {
       type: String,
     },
