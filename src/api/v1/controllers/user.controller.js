@@ -213,7 +213,6 @@ export class UserController {
           tempArrarExp.push(JSON.parse(exp));
         }
         bodyParams.working_experience=[...tempArrarExp];
-
       }
       
       //console.log('Array de skills:..',bodyParams.user_skills,'tipo de dato de user_skills', typeof bodyParams.user_skills)
