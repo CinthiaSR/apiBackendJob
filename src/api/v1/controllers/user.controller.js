@@ -208,10 +208,13 @@ export class UserController {
       const bodyParams = { ...req.body };
       const {working_experience}=bodyParams;
       let tempArrarExp=[];
-      for (let exp of working_experience){
-        tempArrarExp.push(JSON.parse(exp));
+      if(working_experience?.length>0){
+        for (let exp of working_experience){
+          tempArrarExp.push(JSON.parse(exp));
+        }
+        bodyParams.working_experience=[...tempArrarExp];
       }
-      bodyParams.working_experience=[...tempArrarExp];
+      
       //console.log('Array de skills:..',bodyParams.user_skills,'tipo de dato de user_skills', typeof bodyParams.user_skills)
       const file = req?.files?.image;
       /*objRes={
