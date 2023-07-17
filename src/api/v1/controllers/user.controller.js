@@ -281,6 +281,19 @@ export class UserController {
     }
   };
 
+  updatePassword= async(req,res,next)=>{
+    try {
+      const dataBody=req.body;
+      const {email,password}=dataBody
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const result = await User.findOneAndUpdate({email:email},{password:hashedPassword},{new:true})
+
+      res.status(200).json(result)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
   deleteUser = async (req, res, next) => {
     try {
       const { id } = req.params;
