@@ -4,3 +4,5 @@ dist/
 
 .babelrc
 .nodemonrc.json
+
+temp.js
