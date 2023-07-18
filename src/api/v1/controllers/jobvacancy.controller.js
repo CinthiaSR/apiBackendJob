@@ -254,10 +254,22 @@ closeVacancy = async (req, res, next) => {
       console.log("bodyparams:..", bodyParams);
       const {activities}=bodyParams;
       let tempArrarTask=[];
-      for (let task of activities){
-        tempArrarTask.push(JSON.parse(task));
+
+      if(activities){
+        if(Array.isArray(activities)){
+          if(activities?.length>0){
+            for (let task of activities){
+              tempArrarTask.push(JSON.parse(task));
+            }
+            bodyParams.activities=[...tempArrarTask];
+          }
+        }else{
+          tempArrarTask.push(JSON.parse(activities));
+          bodyParams.activities=[...tempArrarTask];
+        }
       }
-      bodyParams.activities=[...tempArrarTask];
+      
+      
 
       const { token, deleteApplicant } = bodyParams;
       if (token) {
