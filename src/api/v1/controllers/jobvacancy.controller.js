@@ -13,6 +13,7 @@ import { sendMailsCandidatesInVacancy } from "../lib/nodeMailer";
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
+
     try {
       const { page, limit } = req.query;
 
@@ -42,6 +43,35 @@ export class jobVacancyController {
                     .limit(per_page) */
       //res.status(200).send(vacancies)
     } catch (error) {
+      next(error);
+    }
+  };
+
+  getAllJobVacancyByUser = async (req, res, next) => {
+    const { token } = req.params;
+      const { _id } = await jwtServices.verify(token);
+    try {
+      const { page, limit } = req.query;
+      const query = {
+        status:'Iniciado',
+        username:_id
+      };
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "desc" },
+        populate: "applicants",
+        populate: "job_skills",
+        // status:'Iniciado'
+      };
+
+      await jobVacancy.paginate(query, options, (err, docs) => {
+        res.status(200).json({
+          item: docs,
+        });
+      });
+    } catch (error) {
+      console.log(error)
       next(error);
     }
   };
@@ -144,7 +174,12 @@ closeVacancy = async (req, res, next) => {
         status,
         job_skills,
       } = req.body;
-      const bodyParams = { ...req.body, username: _id };
+      const bodyParams = { ...req.body, username: _id};
+      let tempArrTask=[]
+      for (let task of activities) {
+        tempArrTask.push(JSON.parse(task))
+      }
+      bodyParams.activities=[...tempArrTask]
       console.log("bodyParams:..", bodyParams);
       const file = req?.files?.image;
       objRes = {
@@ -217,6 +252,25 @@ closeVacancy = async (req, res, next) => {
       const bodyParams = { ...req.body };
       console.log("id:..", id);
       console.log("bodyparams:..", bodyParams);
+      const {activities}=bodyParams;
+      let tempArrarTask=[];
+
+      if(activities){
+        if(Array.isArray(activities)){
+          if(activities?.length>0){
+            for (let task of activities){
+              tempArrarTask.push(JSON.parse(task));
+            }
+            bodyParams.activities=[...tempArrarTask];
+          }
+        }else{
+          tempArrarTask.push(JSON.parse(activities));
+          bodyParams.activities=[...tempArrarTask];
+        }
+      }
+      
+      
+
       const { token, deleteApplicant } = bodyParams;
       if (token) {
         const { _id } = await jwtServices.verify(bodyParams.token);
