@@ -178,10 +178,19 @@ closeVacancy = async (req, res, next) => {
       } = req.body;
       const bodyParams = { ...req.body, username: _id};
       let tempArrTask=[]
-      for (let task of activities) {
-        tempArrTask.push(JSON.parse(task))
+      if(activities){
+        if(Array.isArray(activities)){
+          for (let task of activities) {
+            tempArrTask.push(JSON.parse(task))
+          }
+          bodyParams.activities=[...tempArrTask]
+        }else{
+          const newAct = JSON.parse(activities);
+          tempArrTask.push(newAct);
+          bodyParams.activities=[...tempArrTask];
+        }
       }
-      bodyParams.activities=[...tempArrTask]
+      
       console.log("bodyParams:..", bodyParams);
       const file = req?.files?.image;
       objRes = {
