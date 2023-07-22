@@ -3,6 +3,7 @@ import User from "../models/user.model";
 import jobVacancy from "../models/jobvacancy.model";
 import Company from "../models/company.model";
 import jwtServices from "../../services/jwt.services";
+import { notificationPhaseEmailUser } from "../lib/nodeMailer";
 export class phaseController {
   getAllPhase = async (req, res, next) => {
     try {
@@ -70,6 +71,10 @@ export class phaseController {
       idCandidate
     );
     try {
+      //enviaremos notificacion por correo al candidato de su avance
+      const dataUser = await User.findById({_id:idCandidate});
+      const resultNotification= await notificationPhaseEmailUser(dataUser,phase);
+
       const resultFind = await Phase.findOne({ name: phase });
       const dataVacancies = resultFind?.vacancies;
       console.log("dataVacancies:..", dataVacancies);
@@ -116,6 +121,7 @@ export class phaseController {
         resultUpdate,
         caso,
         tempDataVacancies,
+        resultNotification
       };
       /*
         const {id}=req.params;
@@ -148,9 +154,17 @@ export class phaseController {
         listIdsApplicantsPhase3,
         listIdsApplicantsPhase4,
       ];
+      //Notificaremos a los Candidatos su avance 
+      
 
       for (const phase of phases) {
         const numList = phases.indexOf(phase);
+
+        //Notificaremos a los usuarios de su avance
+        for(let user of listas[numList]){
+          const dataUser = await User.findById({_id:user});
+          const resultNotification= await notificationPhaseEmailUser(dataUser,phase);
+        }
         const resFind = await Phase.findOne({ name: phase });
         let tempVacancies = resFind.vacancies;
         const isExistVacancy = tempVacancies.find(
