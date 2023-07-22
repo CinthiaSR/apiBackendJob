@@ -208,10 +208,23 @@ export class UserController {
       const bodyParams = { ...req.body };
       const {working_experience}=bodyParams;
       let tempArrarExp=[];
-      for (let exp of working_experience){
-        tempArrarExp.push(JSON.parse(exp));
+      if(working_experience){
+        if(Array.isArray(working_experience)){
+          if(working_experience?.length>0){
+            for (let i=0;working_experience.length;i++){
+              tempArrarExp.push(JSON.parse(working_experience[i] ) );
+            }
+            bodyParams.working_experience=[...tempArrarExp];
+          }
+
+        }else{
+          tempArrarExp.push(JSON.parse(working_experience))
+          bodyParams.working_experience=[...tempArrarExp];
+        }
       }
-      bodyParams.working_experience=[...tempArrarExp];
+
+      
+      
       //console.log('Array de skills:..',bodyParams.user_skills,'tipo de dato de user_skills', typeof bodyParams.user_skills)
       const file = req?.files?.image;
       /*objRes={
@@ -278,6 +291,19 @@ export class UserController {
     }
   };
 
+  updatePassword= async(req,res,next)=>{
+    try {
+      const dataBody=req.body;
+      const {email,password}=dataBody
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const result = await User.findOneAndUpdate({email:email},{password:hashedPassword},{new:true})
+
+      res.status(200).json(result)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
   deleteUser = async (req, res, next) => {
     try {
       const { id } = req.params;

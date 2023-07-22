@@ -11,3 +11,4 @@ export default express
 .patch('/:id',AuthMiddleware.auth,jobvacancyController.updateVacancy)
 .delete('/:id',AuthMiddleware.auth,jobvacancyController.deleteVacancy)
 .get('/',jobvacancyController.getAllJobVacancy)
+.get('/getAllJobVacancyByUser/:token',jobvacancyController.getAllJobVacancyByUser)

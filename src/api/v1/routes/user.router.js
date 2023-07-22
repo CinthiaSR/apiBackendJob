@@ -12,6 +12,7 @@ export default express
 .get('/getUserByEmail',userController.getUserByEmail)
 .get('/getUser/:id',userController.getUserById)
 .get('/getSkillsInUser/:token',userController.getSkillsInUser)
+.post('/updatePassword',userController.updatePassword)
 .get('/:token',AuthMiddleware.auth,userController.getUser)
 .patch('/:token',AuthMiddleware.auth,userController.updateUser)
 .delete('/:id',AuthMiddleware.auth,userController.deleteUser)
