@@ -20,7 +20,8 @@ export class SessionController {
       .populate("company_names")
       .populate("my_vacancies")
       .populate("user_skills")
-      .populate("feedback");
+      .populate("feedback")
+      
       console.log('result found User:...',user);
       if (!user) {
         return next(AuthErrorHandler.wrongCredentials())
