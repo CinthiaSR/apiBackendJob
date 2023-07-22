@@ -182,6 +182,7 @@ export class jobVacancyController {
       } = req.body;
       const bodyParams = { ...req.body, username: _id };
       let tempArrTask = [];
+
       if (activities) {
         if (Array.isArray(activities)) {
           for (let task of activities) {

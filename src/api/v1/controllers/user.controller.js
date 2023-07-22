@@ -210,16 +210,24 @@ export class UserController {
       let tempArrarExp=[];
       if(working_experience){
         if(Array.isArray(working_experience)){
+          //console.log('tamaño del working_experience...',working_experience.length);
           if(working_experience?.length>0){
-            for (let i=0;working_experience.length;i++){
+            for (let i=0;i<working_experience.length;i++){
+              //console.log(`Agregando experiencia (${i}):..`,working_experience[i]);
               tempArrarExp.push(JSON.parse(working_experience[i] ) );
             }
             bodyParams.working_experience=[...tempArrarExp];
           }
 
         }else{
-          tempArrarExp.push(JSON.parse(working_experience))
-          bodyParams.working_experience=[...tempArrarExp];
+          if(working_experience!=='none'){
+            tempArrarExp.push(JSON.parse(working_experience))
+            bodyParams.working_experience=[...tempArrarExp];
+          }
+          if(working_experience==='none'){
+            bodyParams.working_experience=[...tempArrarExp]
+          }
+          
         }
       }
 
