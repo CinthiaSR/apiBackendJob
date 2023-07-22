@@ -212,11 +212,11 @@ export class UserController {
         if(Array.isArray(working_experience)){
           if(working_experience?.length>0){
             for (let i=0;working_experience.length;i++){
-              tempArrarExp.push(JSON.parse(working_experience[i] ) );
+              tempArrarExp.push(JSON.parse(working_experience[i]));
+              console.log('temp arry',tempArrarExp)
             }
             bodyParams.working_experience=[...tempArrarExp];
           }
-
         }else{
           tempArrarExp.push(JSON.parse(working_experience))
           bodyParams.working_experience=[...tempArrarExp];
