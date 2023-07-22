@@ -49,8 +49,10 @@ export class jobVacancyController {
 
   getAllJobVacancyByUser = async (req, res, next) => {
     const { token } = req.params;
-      const { _id } = await jwtServices.verify(token);
+      
+      //recuperar las vacantes del reclutador..
     try {
+      const { _id } = await jwtServices.verify(token);
       const { page, limit } = req.query;
       const query = {
         status:'Iniciado',
@@ -71,7 +73,7 @@ export class jobVacancyController {
         });
       });
     } catch (error) {
-      console.log(error)
+      console.log('Error al recuperar las vacantes del reclutador:..',error)
       next(error);
     }
   };
