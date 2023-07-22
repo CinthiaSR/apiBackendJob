@@ -13,12 +13,11 @@ import { sendMailsCandidatesInVacancy } from "../lib/nodeMailer";
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
   getAllJobVacancy = async (req, res, next) => {
-
     try {
       const { page, limit } = req.query;
 
       const query = {
-        status:'Iniciado'
+        status: "Iniciado",
       };
       const options = {
         page: page,
@@ -49,14 +48,14 @@ export class jobVacancyController {
 
   getAllJobVacancyByUser = async (req, res, next) => {
     const { token } = req.params;
-      
-      //recuperar las vacantes del reclutador..
+
+    //recuperar las vacantes del reclutador..
     try {
       const { _id } = await jwtServices.verify(token);
       const { page, limit } = req.query;
       const query = {
-        status:'Iniciado',
-        username:_id
+        status: "Iniciado",
+        username: _id,
       };
       const options = {
         page: page,
@@ -73,18 +72,18 @@ export class jobVacancyController {
         });
       });
     } catch (error) {
-      console.log('Error al recuperar las vacantes del reclutador:..',error)
+      console.log("Error al recuperar las vacantes del reclutador:..", error);
       next(error);
     }
   };
 
-  getAllSkillsByVacancy=async(req,res,next)=>{
+  getAllSkillsByVacancy = async (req, res, next) => {
     try {
-        const {id}=req.params;
-        console.log('idVacancie:..',id);
-        const { page, limit } = req.query;
+      const { id } = req.params;
+      console.log("idVacancie:..", id);
+      const { page, limit } = req.query;
 
-        const infoVacancy = await jobVacancy
+      const infoVacancy = await jobVacancy
         .findById(id)
         .populate("applicants")
         .populate("job_skills");
@@ -92,70 +91,75 @@ export class jobVacancyController {
         return res.status(404).send({ message: "Vacancy not found!" });
       }
 
-      const {job_skills}=infoVacancy
-      console.log(job_skills)
-      // const 
+      const { job_skills } = infoVacancy;
+      console.log(job_skills);
+      // const
       const query = {
-            job_skills: `${job_skills}` 
-        };
-        const options = {
-            page: page,
-            limit: limit,
-            sort: { createdAt: "asc" },
-          };
+        job_skills: `${job_skills}`,
+      };
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "asc" },
+      };
 
-          await jobSkill.paginate(query, options, (err, docs) => {
-            console.log(docs);
-            res.status(200).send({
-              item: docs,
-            });
-          });
-        
+      await jobSkill.paginate(query, options, (err, docs) => {
+        console.log(docs);
+        res.status(200).send({
+          item: docs,
+        });
+      });
     } catch (error) {
       console.log(error);
       next(error);
     }
-}
-closeVacancy = async (req, res, next) => {
-  let objRes={};
-  try {
-    const {idVacancy,listIdsApplicants}= req.body;
-    
-    const resultCloseVacancy= await jobVacancy.findByIdAndUpdate({_id:idVacancy},{status:'Cerrado'},{new:true});
-    const vacancyTitle= resultCloseVacancy?.title;
-    objRes={
-      idVacancy,
-      listIdsApplicants,
-      resultCloseVacancy
-    }
-    
-    if(listIdsApplicants){
-      let listMailsCandidates =[]
-      for(let i=0;i<listIdsApplicants.length;i++){
-        const dataApplicant = await User.findById(listIdsApplicants[i]);
-        if(dataApplicant?.email){
-          listMailsCandidates.push(dataApplicant.email);
+  };
+  closeVacancy = async (req, res, next) => {
+    let objRes = {};
+    try {
+      const { idVacancy, listIdsApplicants } = req.body;
+
+      const resultCloseVacancy = await jobVacancy.findByIdAndUpdate(
+        { _id: idVacancy },
+        { status: "Cerrado" },
+        { new: true }
+      );
+      const vacancyTitle = resultCloseVacancy?.title;
+      objRes = {
+        idVacancy,
+        listIdsApplicants,
+        resultCloseVacancy,
+      };
+
+      if (listIdsApplicants) {
+        let listMailsCandidates = [];
+        for (let i = 0; i < listIdsApplicants.length; i++) {
+          const dataApplicant = await User.findById(listIdsApplicants[i]);
+          if (dataApplicant?.email) {
+            listMailsCandidates.push(dataApplicant.email);
+          }
+        }
+        if (listMailsCandidates.length > 0) {
+          const stringMails = listMailsCandidates.toString();
+          const resultSendMails = await sendMailsCandidatesInVacancy(
+            stringMails,
+            vacancyTitle
+          );
+          objRes = {
+            ...objRes,
+            listMailsCandidates,
+            stringMails,
+            resultSendMails,
+          };
         }
       }
-      if(listMailsCandidates.length>0){
-        const stringMails = listMailsCandidates.toString();
-        const resultSendMails = await sendMailsCandidatesInVacancy(stringMails,vacancyTitle);
-        objRes={
-          ...objRes,
-          listMailsCandidates,
-          stringMails,
-          resultSendMails
-        }
-      }
-      
+
+      res.status(200).json(objRes);
+    } catch (error) {
+      console.log(error);
+      next(error);
     }
-    
-    res.status(200).json(objRes);
-  } catch (error) {
-    console.log(error)
-    next(error)
-  }
-}
+  };
   createVacancy = async (req, res, next) => {
     let objRes = {};
     try {
@@ -176,21 +180,21 @@ closeVacancy = async (req, res, next) => {
         status,
         job_skills,
       } = req.body;
-      const bodyParams = { ...req.body, username: _id};
-      let tempArrTask=[]
-      if(activities){
-        if(Array.isArray(activities)){
+      const bodyParams = { ...req.body, username: _id };
+      let tempArrTask = [];
+      if (activities) {
+        if (Array.isArray(activities)) {
           for (let task of activities) {
-            tempArrTask.push(JSON.parse(task))
+            tempArrTask.push(JSON.parse(task));
           }
-          bodyParams.activities=[...tempArrTask]
-        }else{
+          bodyParams.activities = [...tempArrTask];
+        } else {
           const newAct = JSON.parse(activities);
           tempArrTask.push(newAct);
-          bodyParams.activities=[...tempArrTask];
+          bodyParams.activities = [...tempArrTask];
         }
       }
-      
+
       console.log("bodyParams:..", bodyParams);
       const file = req?.files?.image;
       objRes = {
@@ -263,24 +267,22 @@ closeVacancy = async (req, res, next) => {
       const bodyParams = { ...req.body };
       console.log("id:..", id);
       console.log("bodyparams:..", bodyParams);
-      const {activities}=bodyParams;
-      let tempArrarTask=[];
+      const { activities } = bodyParams;
+      let tempArrarTask = [];
 
-      if(activities){
-        if(Array.isArray(activities)){
-          if(activities?.length>0){
-            for (let task of activities){
+      if (activities) {
+        if (Array.isArray(activities)) {
+          if (activities?.length > 0) {
+            for (let task of activities) {
               tempArrarTask.push(JSON.parse(task));
             }
-            bodyParams.activities=[...tempArrarTask];
+            bodyParams.activities = [...tempArrarTask];
           }
-        }else{
+        } else {
           tempArrarTask.push(JSON.parse(activities));
-          bodyParams.activities=[...tempArrarTask];
+          bodyParams.activities = [...tempArrarTask];
         }
       }
-      
-      
 
       const { token, deleteApplicant } = bodyParams;
       if (token) {
@@ -360,29 +362,28 @@ closeVacancy = async (req, res, next) => {
   };
   updateListApplicantsInVacancie = async (req, res, next) => {
     const { idCandidate, idVacancy, emailUser } = req.body;
-    console.log('emailUser:..',emailUser);
+    console.log("emailUser:..", emailUser);
     try {
-      
-       const result = await jobVacancy.findByIdAndUpdate(
-          { _id: idVacancy },
-          {
-            $pull: { applicants: idCandidate },
-            $addToSet: { rejecteds: idCandidate },
-          },
-          { new: true }
-        )
-      const updateUserMyVacancies= await User.findByIdAndUpdate(
-        {_id:idCandidate},
+      const result = await jobVacancy.findByIdAndUpdate(
+        { _id: idVacancy },
+        {
+          $pull: { applicants: idCandidate },
+          $addToSet: { rejecteds: idCandidate },
+        },
+        { new: true }
+      );
+      const updateUserMyVacancies = await User.findByIdAndUpdate(
+        { _id: idCandidate },
         {
           $pull: { my_vacancies: idVacancy },
         },
         { new: true }
-      )
-       sendRejectEmail(emailUser);
+      );
+      sendRejectEmail(emailUser);
       //console.log('resultUpdate (jobVacancyController):..',{result,updateUserMyVacancies});
-      res.status(200).json({result,updateUserMyVacancies});
+      res.status(200).json({ result, updateUserMyVacancies });
     } catch (error) {
-      console.log('Error en JobVacancy:..',error);
+      console.log("Error en JobVacancy:..", error);
       next(error);
     }
   };
