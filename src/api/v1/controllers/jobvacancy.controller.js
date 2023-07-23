@@ -255,6 +255,7 @@ export class jobVacancyController {
         return res.status(404).send({ message: "Vacancy not found!" });
       }
       res.status(201).send({ infoVacancy });
+      console.log('datos por vacante',infoVacancy)
     } catch (error) {
       console.log(error);
       next(error);

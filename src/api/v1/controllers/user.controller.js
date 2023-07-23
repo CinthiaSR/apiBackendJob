@@ -218,7 +218,6 @@ export class UserController {
             }
             bodyParams.working_experience=[...tempArrarExp];
           }
-
         }else{
           if(working_experience!=='none'){
             tempArrarExp.push(JSON.parse(working_experience))
