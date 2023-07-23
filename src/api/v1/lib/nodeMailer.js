@@ -234,17 +234,19 @@ export const sendMailsCandidatesInVacancy = async (listMails, vacancyTitle) => {
   }
 };
 
-export const notificationPhaseEmailUser = async (dataUser, phase) => {
+export const notificationPhaseEmailUser = async (dataUser, phase, dataVacancy) => {
   let objRes = {
     msg: "Enviando Email al usuario:..",
   };
   const {email, name}= dataUser;
+  const {companyName,title}=dataVacancy;
   const emailUser=email;
   //const userNameEmail = emailUser.split("@")[0];
   const userNameEmail= name;
   const confirmPage = `
-<h3> ${userNameEmail} 
- Muchas felicidades te informamos que has avanzado a la fase de: ${phase},
+<h3> Hola: ${userNameEmail},
+  Respecto a la Vacante: ${title} de la empresa: ${companyName},
+ Nos agrada informarte que has avanzado a la fase de: ${phase},
 Seguiremos en contacto para continuar con tu proceso de reclutamiento saludos.
 </h3>
 `;

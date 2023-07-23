@@ -50,7 +50,7 @@ export class phaseController {
       //const { id } = req.params;
       const { phase } = req.query;
       const infoPhase = await Phase.findOne({ name: phase });
-      console.log("infoPase:..", infoPhase);
+      //console.log("infoPase:..", infoPhase);
       if (!infoPhase) {
         return res.status(404).send({ message: "Phase not found!" });
       } else {
@@ -72,8 +72,10 @@ export class phaseController {
       }
       if(tempPhaseStatus.length>0){
         const findVacancy= tempPhaseStatus.find(itemA=>String(itemA.idVacancy)===idVacancy);
+
         if(findVacancy){
-          tempDataVacancies.forEach(item=>{
+          console.log('vacante encontrada:..',idVacancy);
+          tempPhaseStatus.forEach(item=>{
             if(String(item.idVacancy)===idVacancy){
               item.phase=phase
             }
@@ -101,18 +103,19 @@ export class phaseController {
     try {
       
       const dataUser = await User.findById({_id:idCandidate});
+      const dataVacancy= await jobVacancy.findById({_id:idVacancie});
       const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,dataUser.phase_status);
       //enviaremos notificacion por correo al candidato de su avance
-      const resultNotification= await notificationPhaseEmailUser(dataUser,phase);
+      const resultNotification= await notificationPhaseEmailUser(dataUser,phase,dataVacancy);
       // actualizando status_phase en el candidato
       const resultUpdateSatusPhase= await User.findByIdAndUpdate(
         {_id:idCandidate},
-        {phase_status:tempPhaseStatus},
+        {phase_status:[...tempPhaseStatus]},
         {new:true})
-
+        console.log('resultUpdatePhaseStatus:..',resultUpdateSatusPhase);
       const resultFind = await Phase.findOne({ name: phase });
       const dataVacancies = resultFind?.vacancies;
-      console.log("dataVacancies:..", dataVacancies);
+      //console.log("dataVacancies:..", dataVacancies);
       const findVacancieInPhase = dataVacancies.find(
         (item) => String(item.idVacancie) === idVacancie
       );
@@ -190,7 +193,7 @@ export class phaseController {
         listIdsApplicantsPhase4,
       ];
       //Notificaremos a los Candidatos su avance 
-      
+      const dataVacancy= await jobVacancy.findById({_id:idVacancie});
 
       for (const phase of phases) {
         const numList = phases.indexOf(phase);
@@ -201,10 +204,11 @@ export class phaseController {
           const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,dataUser.phase_status);
           const resultUpdateSatusPhase= await User.findByIdAndUpdate(
             {_id:user},
-            {phase_status:tempPhaseStatus},
+            {phase_status:[...tempPhaseStatus]},
             {new:true})
-
-          const resultNotification= await notificationPhaseEmailUser(dataUser,phase);
+            console.log('resultUpdatePhaseStatus:..',resultUpdateSatusPhase);
+            
+          const resultNotification= await notificationPhaseEmailUser(dataUser,phase,dataVacancy);
         }
         const resFind = await Phase.findOne({ name: phase });
         let tempVacancies = resFind.vacancies;
