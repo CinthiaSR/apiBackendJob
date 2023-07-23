@@ -61,6 +61,34 @@ export class phaseController {
       next(error);
     }
   };
+  updateUserPhaseStatus=(idVacancy,phase,phase_status)=>{
+   
+    const tempPhaseStatus = phase_status;
+      if(tempPhaseStatus.length===0){
+        tempPhaseStatus.push({
+          idVacancy,
+          phase
+        })
+      }
+      if(tempPhaseStatus.length>0){
+        const findVacancy= tempPhaseStatus.find(itemA=>String(itemA.idVacancy)===idVacancy);
+        if(findVacancy){
+          tempDataVacancies.forEach(item=>{
+            if(String(item.idVacancy)===idVacancy){
+              item.phase=phase
+            }
+          })
+        }else{
+          tempPhaseStatus.push({
+            idVacancy,
+            phase
+          })
+        }
+
+      }
+      console.log('Subproceso Actualizacion de phase_status:..',tempPhaseStatus);
+   return tempPhaseStatus
+  };
   updatePhase = async (req, res, next) => {
     const { phase, idVacancie, idCandidate } = req.query;
     //const { _id } = await jwtServices.verify(tokenCandidate);
@@ -71,9 +99,16 @@ export class phaseController {
       idCandidate
     );
     try {
-      //enviaremos notificacion por correo al candidato de su avance
+      
       const dataUser = await User.findById({_id:idCandidate});
+      const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,dataUser.phase_status);
+      //enviaremos notificacion por correo al candidato de su avance
       const resultNotification= await notificationPhaseEmailUser(dataUser,phase);
+      // actualizando status_phase en el candidato
+      const resultUpdateSatusPhase= await User.findByIdAndUpdate(
+        {_id:idCandidate},
+        {phase_status:tempPhaseStatus},
+        {new:true})
 
       const resultFind = await Phase.findOne({ name: phase });
       const dataVacancies = resultFind?.vacancies;
@@ -163,6 +198,12 @@ export class phaseController {
         //Notificaremos a los usuarios de su avance
         for(let user of listas[numList]){
           const dataUser = await User.findById({_id:user});
+          const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,dataUser.phase_status);
+          const resultUpdateSatusPhase= await User.findByIdAndUpdate(
+            {_id:user},
+            {phase_status:tempPhaseStatus},
+            {new:true})
+
           const resultNotification= await notificationPhaseEmailUser(dataUser,phase);
         }
         const resFind = await Phase.findOne({ name: phase });

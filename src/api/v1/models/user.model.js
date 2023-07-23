@@ -41,6 +41,17 @@ const userShema = new mongoose.Schema(
         },
       },
     ],
+    phase_status: [
+      {
+        idVacancy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "jobVacancy",
+        },
+        phase: {
+          type: String,
+        },
+      },
+    ],
     email: {
       type: String,
       required: true,
