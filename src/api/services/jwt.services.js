@@ -17,7 +17,7 @@ class JwtServices {
       secret = process.env.JWT_SECRET
     ) {
       const resultVerify = jwt.verify(token, secret);
-      console.log('resultVerify (jwt.services):..',resultVerify);
+      //console.log('resultVerify (jwt.services):..',resultVerify);
       return resultVerify
     }
 }
