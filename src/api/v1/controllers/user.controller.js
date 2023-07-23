@@ -298,6 +298,7 @@ export class UserController {
       next(error);
     }
   };
+  
 
   updatePassword= async(req,res,next)=>{
     try {
