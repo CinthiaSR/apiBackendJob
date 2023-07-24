@@ -6,6 +6,8 @@ import routes from './api/v1/routes'
 //import { dirname } from "path";
 //import { fileURLToPath } from "url";
 
+//version preliminar 24-Jul-23 11:08 a.m.
+
 export const mainDir = process.cwd();
 
 export default new Server()
