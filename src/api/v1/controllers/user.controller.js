@@ -176,6 +176,7 @@ export class UserController {
       console.log("Consultando user:..", email);
 
       const user = await User.findOne({email})
+      .populate('my_vacancies')
         
       /* .populate("phase")
         .populate("company_names")

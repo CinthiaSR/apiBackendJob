@@ -124,7 +124,7 @@ export class jobVacancyController {
         { status: "Cerrado" },
         { new: true }
       );
-      const vacancyTitle = resultCloseVacancy?.title;
+      const dataVacancy = {...resultCloseVacancy};
       objRes = {
         idVacancy,
         listIdsApplicants,
@@ -143,7 +143,7 @@ export class jobVacancyController {
           const stringMails = listMailsCandidates.toString();
           const resultSendMails = await sendMailsCandidatesInVacancy(
             stringMails,
-            vacancyTitle
+            dataVacancy
           );
           objRes = {
             ...objRes,
@@ -364,7 +364,7 @@ export class jobVacancyController {
   };
   updateListApplicantsInVacancie = async (req, res, next) => {
     const { idCandidate, idVacancy, emailUser } = req.body;
-    console.log("emailUser:..", emailUser);
+    //console.log("emailUser:..", emailUser);
     try {
       const result = await jobVacancy.findByIdAndUpdate(
         { _id: idVacancy },
@@ -374,14 +374,28 @@ export class jobVacancyController {
         },
         { new: true }
       );
+      const findUser = await User.findById({_id:idCandidate});
+      let tempDataPhaseStatus=[];
+      if(findUser){
+        if(findUser?.phase_status?.length>0){
+          tempDataPhaseStatus= [...findUser.phase_status];
+          const newPhaseStatus = tempDataPhaseStatus?.filter(el=>String(el.idVacancy)===String(idVacancy));
+          tempDataPhaseStatus = [...newPhaseStatus];
+        }else{
+          tempDataPhaseStatus=[...tempDataPhaseStatus];
+        }
+        
+
+      }
       const updateUserMyVacancies = await User.findByIdAndUpdate(
         { _id: idCandidate },
         {
           $pull: { my_vacancies: idVacancy },
+          phase_status: [...tempDataPhaseStatus]
         },
         { new: true }
       );
-      sendRejectEmail(emailUser);
+      sendRejectEmail(updateUserMyVacancies,result);
       //console.log('resultUpdate (jobVacancyController):..',{result,updateUserMyVacancies});
       res.status(200).json({ result, updateUserMyVacancies });
     } catch (error) {

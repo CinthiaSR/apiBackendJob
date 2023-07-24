@@ -77,14 +77,16 @@ export const sendCodeEmail = async (objEmail) => {
   }
 };
 
-export const sendRejectEmail = async (emailUser) => {
+export const sendRejectEmail = async (dataUser,dataVacancy) => {
   //console.log('objEmail:..',objEmail);
   let objRes = {
     msg: "Enviando Email al usuario:..",
   };
-  const userNameEmail = emailUser.split("@")[0];
+  const emailUser= dataUser.email;
+  const userNameEmail = dataUser.name;
   const confirmPage = `
- <h3> ${userNameEmail} 
+ <h3> Hola: ${userNameEmail},
+ Respecto a la Vacante: ${dataVacancy.title} de la empresa: ${dataVacancy.companyName}. 
  Agradecemos tu Interes pero hemos decidido no continuar con tu proceso de reclutamiento,
  seguiremos en contacto por si hay algun cambio mas adelante buen dia.
  </h3>
@@ -154,7 +156,7 @@ export const sendRejectEmail = async (emailUser) => {
   }
 };
 
-export const sendMailsCandidatesInVacancy = async (listMails, vacancyTitle) => {
+export const sendMailsCandidatesInVacancy = async (listMails, dataVacancy) => {
   //console.log('objEmail:..',objEmail);
   const tempMails =
     "rami.ror279@gmail.com,miguelangel.serapio@iest.edu.mx,cinthizz1997@gmail.com";
@@ -165,7 +167,9 @@ export const sendMailsCandidatesInVacancy = async (listMails, vacancyTitle) => {
   //const userNameEmail = emailUser.split("@")[0];
   const confirmPage = `
  <h3>
- Agradecemos tu Interes en el proceso de reclutamiento para la vacante ${vacancyTitle}, pero por el momento esta vacante ya se encuentra cerrada,
+ Agradecemos tu Interes en el proceso de reclutamiento para la vacante: ${dataVacancy.title},
+ de la empresa: ${dataVacancy.companyName},
+  pero por el momento esta vacante ya se encuentra cerrada,
  seguiremos en contacto por si hay algun cambio mas adelante buen dia.
  </h3>
 `;
@@ -245,7 +249,7 @@ export const notificationPhaseEmailUser = async (dataUser, phase, dataVacancy) =
   const userNameEmail= name;
   const confirmPage = `
 <h3> Hola: ${userNameEmail},
-  Respecto a la Vacante: ${title} de la empresa: ${companyName},
+  Respecto a la Vacante: ${title}, de la empresa: ${companyName},
  Nos agrada informarte que has avanzado a la fase de: ${phase},
 Seguiremos en contacto para continuar con tu proceso de reclutamiento saludos.
 </h3>

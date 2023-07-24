@@ -201,14 +201,30 @@ export class phaseController {
         //Notificaremos a los usuarios de su avance
         for(let user of listas[numList]){
           const dataUser = await User.findById({_id:user});
-          const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,dataUser.phase_status);
+          const prevPhaseStatus = [...dataUser.phase_status];
+          const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,prevPhaseStatus);
           const resultUpdateSatusPhase= await User.findByIdAndUpdate(
             {_id:user},
             {phase_status:[...tempPhaseStatus]},
             {new:true})
             console.log('resultUpdatePhaseStatus:..',resultUpdateSatusPhase);
-            
-          const resultNotification= await notificationPhaseEmailUser(dataUser,phase,dataVacancy);
+          const newPhaseStatus= [...resultUpdateSatusPhase.phase_status];
+          let prevPhase='';
+          let newPhase='';
+          prevPhaseStatus.forEach((elA)=>{
+            if(String(elA.idVacancy)===String(idVacancie)){
+              prevPhase=elA.phase;
+            }
+          })
+          newPhaseStatus.forEach((elB)=>{
+            if(String(elB.idVacancy)===String(idVacancie)){
+              newPhase=elB.phase;
+            }
+          })
+          if(prevPhase!==newPhase){
+            const resultNotification= await notificationPhaseEmailUser(dataUser,phase,dataVacancy);
+          }
+          
         }
         const resFind = await Phase.findOne({ name: phase });
         let tempVacancies = resFind.vacancies;
