@@ -61,8 +61,9 @@ export class phaseController {
       next(error);
     }
   };
-  updateUserPhaseStatus=(idVacancy,phase,phase_status)=>{
-   
+  updateUserPhaseStatus=(idVacancy,phase,phase_status,emailUser)=>{
+   let prevPhase='';
+   let newPhase='';
     const tempPhaseStatus = phase_status;
       if(tempPhaseStatus.length===0){
         tempPhaseStatus.push({
@@ -74,9 +75,13 @@ export class phaseController {
         const findVacancy= tempPhaseStatus.find(itemA=>String(itemA.idVacancy)===idVacancy);
 
         if(findVacancy){
-          console.log('vacante encontrada:..',idVacancy);
+          //console.log('vacante encontrada:..',idVacancy);
           tempPhaseStatus.forEach(item=>{
             if(String(item.idVacancy)===idVacancy){
+              //console.log('---Analizando usuario:...---',emailUser);
+              //console.log('----Fase anterior:...----',item.phase);
+              prevPhase=item.phase;
+              newPhase=phase;
               item.phase=phase
             }
           })
@@ -88,8 +93,8 @@ export class phaseController {
         }
 
       }
-      console.log('Subproceso Actualizacion de phase_status:..',tempPhaseStatus);
-   return tempPhaseStatus
+      //console.log('Subproceso Actualizacion de phase_status:..',tempPhaseStatus);
+   return {tempPhaseStatus,prevPhase,newPhase}
   };
   updatePhase = async (req, res, next) => {
     const { phase, idVacancie, idCandidate } = req.query;
@@ -104,7 +109,7 @@ export class phaseController {
       
       const dataUser = await User.findById({_id:idCandidate});
       const dataVacancy= await jobVacancy.findById({_id:idVacancie});
-      const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,dataUser.phase_status);
+      const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,dataUser.phase_status)?.tempPhaseStatus;
       //enviaremos notificacion por correo al candidato de su avance
       const resultNotification= await notificationPhaseEmailUser(dataUser,phase,dataVacancy);
       // actualizando status_phase en el candidato
@@ -202,25 +207,21 @@ export class phaseController {
         for(let user of listas[numList]){
           const dataUser = await User.findById({_id:user});
           const prevPhaseStatus = [...dataUser.phase_status];
-          const tempPhaseStatus= this.updateUserPhaseStatus(idVacancie,phase,prevPhaseStatus);
+          const tempPhaseStatusData= this.updateUserPhaseStatus(idVacancie,phase,prevPhaseStatus,dataUser.email);
+          const tempPhaseStatus= tempPhaseStatusData?.tempPhaseStatus;
+          const prevPhase = tempPhaseStatusData.prevPhase;
+          const newPhase = tempPhaseStatusData.newPhase;
           const resultUpdateSatusPhase= await User.findByIdAndUpdate(
             {_id:user},
             {phase_status:[...tempPhaseStatus]},
             {new:true})
-            console.log('resultUpdatePhaseStatus:..',resultUpdateSatusPhase);
-          const newPhaseStatus= [...resultUpdateSatusPhase.phase_status];
-          let prevPhase='';
-          let newPhase='';
-          prevPhaseStatus.forEach((elA)=>{
-            if(String(elA.idVacancy)===String(idVacancie)){
-              prevPhase=elA.phase;
-            }
-          })
-          newPhaseStatus.forEach((elB)=>{
-            if(String(elB.idVacancy)===String(idVacancie)){
-              newPhase=elB.phase;
-            }
-          })
+            //console.log('resultUpdatePhaseStatus:..',resultUpdateSatusPhase);
+          const newPhaseStatus= [...tempPhaseStatus];
+          
+          //console.log('----emailUser:..----',dataUser.email);
+          //console.log('-----Fase Anterior:..-----',prevPhase);
+          //console.log('-----Nueva Fase:..-----',newPhase);
+
           if(prevPhase!==newPhase){
             const resultNotification= await notificationPhaseEmailUser(dataUser,phase,dataVacancy);
           }
