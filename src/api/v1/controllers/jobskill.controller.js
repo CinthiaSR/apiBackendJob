@@ -64,6 +64,21 @@ getJobSkill=async(req,res,next)=>{
     }
 
 }
+getJobSkillForUser=async(req,res,next)=>{
+    try {
+        const {id}=req.params;
+        // const infoJobSkill=await jobSkill.findById(id).populate('vacancy')
+        const infoJobSkill=await jobSkill.findById(id)
+        if(!infoJobSkill){
+            return res.status(404).send({message:'Skill not found'})
+        }else{
+            res.status(201).json({infoJobSkill})
+        }
+    } catch (error) {
+        next(error)
+    }
+
+}
 updateJobSkill=async(req,res,next)=>{
     try {
         const {id}=req.params;

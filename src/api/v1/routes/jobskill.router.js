@@ -8,5 +8,6 @@ export default express
 .get('/getAllSkillsForVacancy',jobskillController.getAllSkillsForVacancy)
 .post('/',AuthMiddleware.auth,jobskillController.createJobSkill)
 .get('/:id',jobskillController.getJobSkill)
+.get('/getJobSkillForUser/:id',jobskillController.getJobSkillForUser)
 .patch('/:id',AuthMiddleware.auth,jobskillController.updateJobSkill)
 .delete('/:id',AuthMiddleware.auth,jobskillController.deleteJobSkill)
