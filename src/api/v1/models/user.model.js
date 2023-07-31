@@ -32,7 +32,21 @@ const userShema = new mongoose.Schema(
       type: String,
     },
     working_experience: [
+      // {
+      //   position: {
+      //     type: String,
+      //   },
+      //   description: {
+      //     type: String,
+      //   },
+      // },
       {
+        company: {
+          type: String,
+        },
+        period: {
+          type: String,
+        },
         position: {
           type: String,
         },
