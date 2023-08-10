@@ -12,6 +12,131 @@ import { sendMailsCandidatesInVacancy } from "../lib/nodeMailer";
 
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
+  getTitlesVacancies = async (req, res, next) => {
+    let objRes = {};
+    try {
+      const distinctTitles = await jobVacancy.distinct("title");
+      let tempDataTitles = [];
+      if (distinctTitles) {
+        distinctTitles.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataTitles.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataTitles.push(item);
+          }
+        });
+      }
+      const distinctCompanies = await jobVacancy.distinct("companyName");
+      let tempDataCompanies = [];
+      if (distinctCompanies) {
+        distinctCompanies.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataCompanies.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataCompanies.push(item);
+          }
+        });
+      }
+      const distinctTypes = await jobVacancy.distinct("type");
+      let tempDataTypes = [];
+      if (distinctTypes) {
+        distinctTypes.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataTypes.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataTypes.push(item);
+          }
+        });
+      }
+      const distinctModes = await jobVacancy.distinct("mode");
+      let tempDataModes = [];
+      if (distinctModes) {
+        distinctModes.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataModes.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataModes.push(item);
+          }
+        });
+      }
+      const distinctCities = await jobVacancy.distinct("city");
+      let tempDataCities = [];
+      if (distinctCities) {
+        distinctCities.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataCities.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataCities.push(item);
+          }
+        });
+      }
+      objRes = {
+        distinctCompanies: tempDataCompanies,
+        distinctTitles: tempDataTitles,
+        distinctTypes: tempDataTypes,
+        distinctModes: tempDataModes,
+        distinctCities: tempDataCities,
+      };
+      res.status(200).json(objRes);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+  getDataConsult = async (req, res, next) => {
+    const { value, page, limit } = req.query;
+    try {
+
+      const query = {
+        $or: [
+          { title: value },
+          { companyName: value },
+          { type: value },
+          { city: value },
+          { mode: value },
+        ],
+        status:'Iniciado',
+      };
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "desc" },
+        populate: "applicants",
+        populate: "job_skills",
+        // status:'Iniciado'
+      };
+
+      /*
+      const resultConsult = await jobVacancy.find({
+        $or: [
+          { title: value },
+          { companyName: value },
+          { type: value },
+          { city: value },
+          { mode: value },
+        ],
+      });*/
+      await jobVacancy.paginate(query, options, (err, docs) => {
+        res.status(200).json({
+          item: docs,
+        });
+      });
+      //res.status(200).json(resultConsult);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
   getAllJobVacancy = async (req, res, next) => {
     try {
       const { page, limit } = req.query;
