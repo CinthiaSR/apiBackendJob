@@ -7,6 +7,8 @@ export default express
 .post('/updateListApplicantsInVacancie',AuthMiddleware.auth,jobvacancyController.updateListApplicantsInVacancie)
 .post('/closeVacancy',jobvacancyController.closeVacancy)
 .post('/:token',AuthMiddleware.auth,jobvacancyController.createVacancy)
+.get('/getTitlesVacancies',jobvacancyController.getTitlesVacancies)
+.get('/getDataConsult',jobvacancyController.getDataConsult)
 .get('/:id',jobvacancyController.getVacancy)
 .patch('/:id',AuthMiddleware.auth,jobvacancyController.updateVacancy)
 .delete('/:id',AuthMiddleware.auth,jobvacancyController.deleteVacancy)
