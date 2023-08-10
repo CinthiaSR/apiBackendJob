@@ -124,7 +124,7 @@ export class jobVacancyController {
         { status: "Cerrado" },
         { new: true }
       );
-      const dataVacancy = {...resultCloseVacancy};
+      const dataVacancy = { ...resultCloseVacancy };
       objRes = {
         idVacancy,
         listIdsApplicants,
@@ -255,7 +255,7 @@ export class jobVacancyController {
         return res.status(404).send({ message: "Vacancy not found!" });
       }
       res.status(201).send({ infoVacancy });
-      console.log('datos por vacante',infoVacancy)
+      console.log("datos por vacante", infoVacancy);
     } catch (error) {
       console.log(error);
       next(error);
@@ -374,28 +374,28 @@ export class jobVacancyController {
         },
         { new: true }
       );
-      const findUser = await User.findById({_id:idCandidate});
-      let tempDataPhaseStatus=[];
-      if(findUser){
-        if(findUser?.phase_status?.length>0){
-          tempDataPhaseStatus= [...findUser.phase_status];
-          const newPhaseStatus = tempDataPhaseStatus?.filter(el=>String(el.idVacancy)===String(idVacancy));
+      const findUser = await User.findById({ _id: idCandidate });
+      let tempDataPhaseStatus = [];
+      if (findUser) {
+        if (findUser?.phase_status?.length > 0) {
+          tempDataPhaseStatus = [...findUser.phase_status];
+          const newPhaseStatus = tempDataPhaseStatus?.filter(
+            (el) => String(el.idVacancy) === String(idVacancy)
+          );
           tempDataPhaseStatus = [...newPhaseStatus];
-        }else{
-          tempDataPhaseStatus=[...tempDataPhaseStatus];
+        } else {
+          tempDataPhaseStatus = [...tempDataPhaseStatus];
         }
-        
-
       }
       const updateUserMyVacancies = await User.findByIdAndUpdate(
         { _id: idCandidate },
         {
           $pull: { my_vacancies: idVacancy },
-          phase_status: [...tempDataPhaseStatus]
+          phase_status: [...tempDataPhaseStatus],
         },
         { new: true }
       );
-      sendRejectEmail(updateUserMyVacancies,result);
+      sendRejectEmail(updateUserMyVacancies, result);
       //console.log('resultUpdate (jobVacancyController):..',{result,updateUserMyVacancies});
       res.status(200).json({ result, updateUserMyVacancies });
     } catch (error) {
