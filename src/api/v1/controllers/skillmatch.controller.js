@@ -9,8 +9,6 @@ getAllSkillsMatch=async(req,res,next)=>{
                 item:docs
             })
         })
-        // const infoSkill=await skillMatch.find({}).populate('vacancy').populate('user_skills').populate('job_skills')
-        // res.status(201).send(infoSkill)
     } catch (error) {
         next(error)
     }

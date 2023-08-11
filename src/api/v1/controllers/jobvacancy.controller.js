@@ -33,14 +33,7 @@ export class jobVacancyController {
           item: docs,
         });
       });
-
-      /* const vacancies = await jobVacancy.find({})
-                    .populate('applicants')
-                    .populate('job_skills')
-                    .sort({createAt:'desc'})
-                    .skip(skip)
-                    .limit(per_page) */
-      //res.status(200).send(vacancies)
+ 
     } catch (error) {
       next(error);
     }
@@ -351,12 +344,6 @@ export class jobVacancyController {
           res.status(201).json({ message: "Updated!", updateVacancy });
         }
       }
-      // -------------------------- end image
-      //     const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
-      //     if(!infoVacancy){
-      //         return res.status(404).send({message:'Vacancy not found!'})
-      //     }
-      //     res.status(201).send(infoVacancy)
     } catch (error) {
       console.log(error);
       next(error);

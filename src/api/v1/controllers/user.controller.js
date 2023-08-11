@@ -152,11 +152,6 @@ export class UserController {
       const user = await User.findById(id)
         .populate("user_skills")
         .populate("my_vacancies");
-      /* .populate("phase")
-        .populate("company_names")
-        
-        
-        .populate("feedback"); */
       if (!user) {
         res.status(404).send({
           error: "No se encontro ningun registro en la base de datos",
@@ -177,12 +172,6 @@ export class UserController {
 
       const user = await User.findOne({email})
       .populate('my_vacancies')
-        
-      /* .populate("phase")
-        .populate("company_names")
-        
-        
-        .populate("feedback"); */
       if (!user) {
         res.status(404).send({
           error: "No se encontro ningun registro en la base de datos",
@@ -230,17 +219,7 @@ export class UserController {
           
         }
       }
-
-      
-      
-      //console.log('Array de skills:..',bodyParams.user_skills,'tipo de dato de user_skills', typeof bodyParams.user_skills)
       const file = req?.files?.image;
-      /*objRes={
-        token,
-        bodyParams
-      }
-      console.log(objRes);
-      res.status(200).json(objRes);*/
       if (bodyParams?.password !== "" && bodyParams?.password !== undefined) {
         const tempPass = bodyParams.password;
         const hashedPassword = await bcrypt.hash(tempPass, 10);
@@ -253,7 +232,6 @@ export class UserController {
         bodyParams,
         file,
       };
-      //console.log("objRes:..", objRes);
       if (file) {
         const responseUploadFile = await uploadOneFileToBucket(file, _id);
         if (responseUploadFile) {

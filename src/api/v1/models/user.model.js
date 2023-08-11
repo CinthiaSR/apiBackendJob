@@ -100,18 +100,18 @@ const userShema = new mongoose.Schema(
         ref: "jobSkill",
       },
     ],
-    phase: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Phase",
-      },
-    ],
-    feedback: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Feedback",
-      },
-    ],
+    // phase: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Phase",
+    //   },
+    // ],
+    // feedback: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Feedback",
+    //   },
+    // ],
   },
   {
     timestamps: true,
