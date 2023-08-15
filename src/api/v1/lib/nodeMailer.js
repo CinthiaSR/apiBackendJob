@@ -9,8 +9,100 @@ export const sendCodeEmail = async (objEmail) => {
   };
   const userNameEmail = objEmail.email.split("@")[0];
   const confirmPage = `
-   <h3>Bienvenido ${userNameEmail} tu codigo de acceso es:</h3>
-   <h1>${objEmail.code}</h1>
+  <div>
+  <a href="https://web.jobinder.org/">
+    <img
+      width="30%"
+      style="
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1%;
+        margin-bottom: 1%;
+      "
+      src="https://frontjobinderimg.s3.amazonaws.com/logo.png"
+      alt="logo"
+    />
+  </a>
+  <h3 style="text-align: center; color: #666; font-size: 14px">
+    Bienvenido:
+    <span style="color: #000; font-size: 18px">${userNameEmail}</span>
+    tu código de acceso es:
+  </h3>
+  <h1
+    style="
+      text-align: center;
+      color: #444;
+      background-color: aqua;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    "
+  >
+    ${objEmail.code}
+  </h1>
+  <div style="background-color: #498ba6">
+    <ul
+      class="social-media"
+      style="
+        margin-top: 50px;
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <li>
+        <a
+          href="https://instagram.com/officialjobinder?igshid=YWYwM2I1ZDdmOQ=="
+        >
+          <img
+            width="50px"
+            style="border-radius: 50%; background-color: #ddd"
+            src="https://frontjobinderimg.s3.amazonaws.com/instagram-2016-5.svg"
+            alt="instagram"
+          />
+        </a>
+      </li>
+      <li>
+        <a href="https://www.tiktok.com/@jobinder.org1">
+          <img
+            width="50px"
+            style="border-radius: 50%"
+            src="https://frontjobinderimg.s3.amazonaws.com/tiktok-icon-2.svg"
+            alt="tiktok"
+          />
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://twitter.com/JobinderOficial?t=Sja_j7YFlngIwuGu7nCmEA&s=09"
+        >
+          <img
+            width="50px"
+            style="border-radius: 50%"
+            src="https://frontjobinderimg.s3.amazonaws.com/twitter-3.svg"
+            alt="twiter"
+          />
+        </a>
+      </li>
+      <li>
+        <a href="https://www.facebook.com/profile.php?id=100094321044877">
+          <img
+            width="50px"
+            style="border-radius: 50%"
+            src="https://frontjobinderimg.s3.amazonaws.com/facebook-2020-2-1.svg"
+            alt="facebook"
+          />
+        </a>
+      </li>
+    </ul>
+    <div style="text-align: center; color: #fff; width: 100%">
+      © Jobinder 2023. All Rights Reserved.
+    </div>
+  </div>
+</div>
   `;
 
   try {
