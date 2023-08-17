@@ -8,7 +8,7 @@
   <!-- src="" -->
   <body>
     <div>
-      <a href="https://web.jobinder.org/">
+      <a style="display: block;" href="https://web.jobinder.org/">
         <img
           width="30%"
           style="
@@ -23,36 +23,26 @@
         />
       </a>
       <h3 style="text-align: center; color: #666; font-size: 14px">
-        Bienvenido:
-        <span style="color: #000; font-size: 18px">${userNameEmail}</span>
-        tu código de acceso es:
+        Respecto a la Vacante:
+        <span style="color: #000; background-color: aqua">${dataVacancy.title}</span>
+        de la empresa:
+        <span style="color: #000; background-color: aqua">${dataVacancy.companyName}</span>
+        Agradecemos tu Interes en el proceso de reclutamiento, pero por el momento esta vacante ya se encuentra cerrada,
+        seguiremos en contacto por si hay algun cambio mas adelante buen dia.
       </h3>
-      <h1
-        style="
-          text-align: center;
-          color: #444;
-          background-color: aqua;
-          width: fit-content;
-          margin-left: auto;
-          margin-right: auto;
-        "
-      >
-        ${objEmail.code}
-      </h1>
       <div style="background-color: #498ba6">
         <ul
           class="social-media"
           style="
-            display: block;
             margin-top: 50px;
             list-style: none;
-            margin-left: auto;
-            margin-right: auto;
-            width: 215px;
-            padding-left: 0%;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
           "
         >
-          <li style="display: inline; vertical-align: middle">
+          <li>
             <a
               href="https://instagram.com/officialjobinder?igshid=YWYwM2I1ZDdmOQ=="
             >
@@ -64,7 +54,7 @@
               />
             </a>
           </li>
-          <li style="display: inline; vertical-align: middle">
+          <li>
             <a href="https://www.tiktok.com/@jobinder.org1">
               <img
                 width="50px"
@@ -74,7 +64,7 @@
               />
             </a>
           </li>
-          <li style="display: inline; vertical-align: middle">
+          <li>
             <a
               href="https://twitter.com/JobinderOficial?t=Sja_j7YFlngIwuGu7nCmEA&s=09"
             >
@@ -86,7 +76,7 @@
               />
             </a>
           </li>
-          <li style="display: inline; vertical-align: middle">
+          <li>
             <a href="https://www.facebook.com/profile.php?id=100094321044877">
               <img
                 width="50px"
