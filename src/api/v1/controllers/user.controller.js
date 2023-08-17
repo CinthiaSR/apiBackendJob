@@ -188,7 +188,7 @@ export class UserController {
   // aqui se actualiza el perfil del usuario
   updateUser = async (req, res, next) => {
     let objRes = {};
-    console.log("Actualizando dataUser(2):..", req.body);
+    console.log("Actualizando dataUser(2) PRUEBAS ROR:..", req.body);
     
 
     //debuging 1
