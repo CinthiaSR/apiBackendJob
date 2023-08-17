@@ -7,11 +7,6 @@ const jobSkillSchema=new mongoose.Schema({
     level:{
         type:String
     },
-    // vacancy:[{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'jobVacancy',
-    // }],
-
 },{
     timestamps:true
 })

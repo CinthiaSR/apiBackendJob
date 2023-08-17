@@ -15,8 +15,6 @@ getAllJobSkills=async(req,res,next)=>{
                 item:docs
             })
         })
-        // const infoJobSkills= await jobSkill.find({}).populate('vacancy')
-        // res.status(201).send(infoJobSkills)
     } catch (error) {
         next(error)
     }
@@ -41,9 +39,6 @@ createJobSkill=async(req,res,next)=>{
             name,level
         });
         await newJobSkill.save()
-        /*const newSkillVacancy=await jobVacancy.findById({_id:newJobSkill.vacancy})
-        newSkillVacancy.job_skills.push(newJobSkill)
-        await newSkillVacancy.save({validateBeforeSave:false});*/
         res.status(201).json({message:'Created Ok',newJobSkill})
     } catch (error) {
         next(error)

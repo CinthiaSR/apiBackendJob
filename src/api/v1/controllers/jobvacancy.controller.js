@@ -158,14 +158,7 @@ export class jobVacancyController {
           item: docs,
         });
       });
-
-      /* const vacancies = await jobVacancy.find({})
-                    .populate('applicants')
-                    .populate('job_skills')
-                    .sort({createAt:'desc'})
-                    .skip(skip)
-                    .limit(per_page) */
-      //res.status(200).send(vacancies)
+ 
     } catch (error) {
       next(error);
     }
@@ -175,17 +168,21 @@ export class jobVacancyController {
     const { token } = req.params;
 
     //recuperar las vacantes del reclutador..
+    
     try {
       const { _id } = await jwtServices.verify(token);
+      console.log('Recuperar las vacantes del reclutador:..',_id);
       const { page, limit } = req.query;
       const query = {
         status: "Iniciado",
         username: _id,
       };
+      const dataUser= await User.findById(_id);
       const options = {
         page: page,
         limit: limit,
         sort: { createdAt: "desc" },
+        populate: "username",
         populate: "applicants",
         populate: "job_skills",
         // status:'Iniciado'
@@ -194,6 +191,7 @@ export class jobVacancyController {
       await jobVacancy.paginate(query, options, (err, docs) => {
         res.status(200).json({
           item: docs,
+          dataRecrutier:dataUser.email
         });
       });
     } catch (error) {
@@ -389,10 +387,12 @@ export class jobVacancyController {
   //actualiza el dataVacancy
   updateVacancy = async (req, res, next) => {
     let objRes = {};
+    
     try {
       const { id } = req.params;
       const bodyParams = { ...req.body };
-      console.log("id:..", id);
+
+      console.log("-----------Actualizando PRUEBAS:..idVacancy :..", id);
       console.log("bodyparams:..", bodyParams);
       const { activities } = bodyParams;
       let tempArrarTask = [];
@@ -416,7 +416,7 @@ export class jobVacancyController {
         const { _id } = await jwtServices.verify(bodyParams.token);
         const retriveDataVacancie = await jobVacancy.findById(id);
         //este caso es cuando se agrega un id al array de applicants
-        if (!deleteApplicant) {
+        if (deleteApplicant===undefined) {
           if (retriveDataVacancie?.applicants) {
             bodyParams.applicants = [...retriveDataVacancie.applicants, _id];
           } else {
@@ -425,14 +425,16 @@ export class jobVacancyController {
           delete bodyParams.token;
         }
         //este es el caso cuando se elimina un id del array de applicants
-        if (deleteApplicant) {
+        if (deleteApplicant===true) {
           if (retriveDataVacancie?.applicants) {
             bodyParams.applicants = retriveDataVacancie.applicants.filter(
-              (item) => item._id !== _id
+              (item) => String(item._id) !== String(_id)
             );
           }
+          delete bodyParams.deleteApplicant;
           delete bodyParams.token;
         }
+        console.log("--------(NUEVOS DATOS...)bodyParams:..", bodyParams);
       }
 
       // -------------------------------------- update Image
@@ -476,12 +478,6 @@ export class jobVacancyController {
           res.status(201).json({ message: "Updated!", updateVacancy });
         }
       }
-      // -------------------------- end image
-      //     const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
-      //     if(!infoVacancy){
-      //         return res.status(404).send({message:'Vacancy not found!'})
-      //     }
-      //     res.status(201).send(infoVacancy)
     } catch (error) {
       console.log(error);
       next(error);

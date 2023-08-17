@@ -166,15 +166,6 @@ export class phaseController {
         tempDataVacancies,
         resultNotification
       };
-      /*
-        const {id}=req.params;
-        const bodyParams={...req.body};
-        const infoPhase= await Phase.findByIdAndUpdate(id,bodyParams,{new:true})
-        if(!infoPhase){
-            return res.status(404).send({message:'Phase not found!'})
-        }else{
-            res.status(201).json({message:'Updated Ok',infoPhase})
-        }*/
       res.status(200).json(objRes);
     } catch (error) {
       console.log("Error UpdatePhase:...", error);
@@ -217,10 +208,6 @@ export class phaseController {
             {new:true})
             //console.log('resultUpdatePhaseStatus:..',resultUpdateSatusPhase);
           const newPhaseStatus= [...tempPhaseStatus];
-          
-          //console.log('----emailUser:..----',dataUser.email);
-          //console.log('-----Fase Anterior:..-----',prevPhase);
-          //console.log('-----Nueva Fase:..-----',newPhase);
 
           if(prevPhase!==newPhase){
             const resultNotification= await notificationPhaseEmailUser(dataUser,phase,dataVacancy);
