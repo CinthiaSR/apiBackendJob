@@ -150,6 +150,7 @@ export class jobVacancyController {
         sort: { createdAt: "desc" },
         populate: "applicants",
         populate: "job_skills",
+        populate: "username",
         // status:'Iniciado'
       };
 
@@ -490,8 +491,9 @@ export class jobVacancyController {
       const result = await jobVacancy.findByIdAndUpdate(
         { _id: idVacancy },
         {
-          $pull: { applicants: idCandidate },
           $addToSet: { rejecteds: idCandidate },
+          $pull: { applicants: idCandidate },
+          
         },
         { new: true }
       );
