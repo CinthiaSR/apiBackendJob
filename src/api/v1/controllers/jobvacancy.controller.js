@@ -12,6 +12,131 @@ import { sendMailsCandidatesInVacancy } from "../lib/nodeMailer";
 
 const { AWS_BUCKETNAME } = process.env;
 export class jobVacancyController {
+  getTitlesVacancies = async (req, res, next) => {
+    let objRes = {};
+    try {
+      const distinctTitles = await jobVacancy.distinct("title");
+      let tempDataTitles = [];
+      if (distinctTitles) {
+        distinctTitles.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataTitles.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataTitles.push(item);
+          }
+        });
+      }
+      const distinctCompanies = await jobVacancy.distinct("companyName");
+      let tempDataCompanies = [];
+      if (distinctCompanies) {
+        distinctCompanies.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataCompanies.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataCompanies.push(item);
+          }
+        });
+      }
+      const distinctTypes = await jobVacancy.distinct("type");
+      let tempDataTypes = [];
+      if (distinctTypes) {
+        distinctTypes.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataTypes.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataTypes.push(item);
+          }
+        });
+      }
+      const distinctModes = await jobVacancy.distinct("mode");
+      let tempDataModes = [];
+      if (distinctModes) {
+        distinctModes.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataModes.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataModes.push(item);
+          }
+        });
+      }
+      const distinctCities = await jobVacancy.distinct("city");
+      let tempDataCities = [];
+      if (distinctCities) {
+        distinctCities.forEach((item) => {
+          const tempItem = item?.toLowerCase().trim();
+          const findItem = tempDataCities.find(
+            (el) => el.toLowerCase().trim() === tempItem
+          );
+          if (!findItem) {
+            tempDataCities.push(item);
+          }
+        });
+      }
+      objRes = {
+        distinctCompanies: tempDataCompanies,
+        distinctTitles: tempDataTitles,
+        distinctTypes: tempDataTypes,
+        distinctModes: tempDataModes,
+        distinctCities: tempDataCities,
+      };
+      res.status(200).json(objRes);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+  getDataConsult = async (req, res, next) => {
+    const { value, page, limit } = req.query;
+    try {
+
+      const query = {
+        $or: [
+          { title: value },
+          { companyName: value },
+          { type: value },
+          { city: value },
+          { mode: value },
+        ],
+        status:'Iniciado',
+      };
+      const options = {
+        page: page,
+        limit: limit,
+        sort: { createdAt: "desc" },
+        populate: "applicants",
+        populate: "job_skills",
+        // status:'Iniciado'
+      };
+
+      /*
+      const resultConsult = await jobVacancy.find({
+        $or: [
+          { title: value },
+          { companyName: value },
+          { type: value },
+          { city: value },
+          { mode: value },
+        ],
+      });*/
+      await jobVacancy.paginate(query, options, (err, docs) => {
+        res.status(200).json({
+          item: docs,
+        });
+      });
+      //res.status(200).json(resultConsult);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
   getAllJobVacancy = async (req, res, next) => {
     try {
       const { page, limit } = req.query;
@@ -25,6 +150,7 @@ export class jobVacancyController {
         sort: { createdAt: "desc" },
         populate: "applicants",
         populate: "job_skills",
+        populate: "username",
         // status:'Iniciado'
       };
 
@@ -33,14 +159,7 @@ export class jobVacancyController {
           item: docs,
         });
       });
-
-      /* const vacancies = await jobVacancy.find({})
-                    .populate('applicants')
-                    .populate('job_skills')
-                    .sort({createAt:'desc'})
-                    .skip(skip)
-                    .limit(per_page) */
-      //res.status(200).send(vacancies)
+ 
     } catch (error) {
       next(error);
     }
@@ -50,17 +169,21 @@ export class jobVacancyController {
     const { token } = req.params;
 
     //recuperar las vacantes del reclutador..
+    
     try {
       const { _id } = await jwtServices.verify(token);
+      console.log('Recuperar las vacantes del reclutador:..',_id);
       const { page, limit } = req.query;
       const query = {
         status: "Iniciado",
         username: _id,
       };
+      const dataUser= await User.findById(_id);
       const options = {
         page: page,
         limit: limit,
         sort: { createdAt: "desc" },
+        populate: "username",
         populate: "applicants",
         populate: "job_skills",
         // status:'Iniciado'
@@ -69,6 +192,7 @@ export class jobVacancyController {
       await jobVacancy.paginate(query, options, (err, docs) => {
         res.status(200).json({
           item: docs,
+          dataRecrutier:dataUser.email
         });
       });
     } catch (error) {
@@ -124,7 +248,7 @@ export class jobVacancyController {
         { status: "Cerrado" },
         { new: true }
       );
-      const dataVacancy = {...resultCloseVacancy};
+      const dataVacancy = { ...resultCloseVacancy };
       objRes = {
         idVacancy,
         listIdsApplicants,
@@ -255,7 +379,7 @@ export class jobVacancyController {
         return res.status(404).send({ message: "Vacancy not found!" });
       }
       res.status(201).send({ infoVacancy });
-      console.log('datos por vacante',infoVacancy)
+      console.log("datos por vacante", infoVacancy);
     } catch (error) {
       console.log(error);
       next(error);
@@ -264,10 +388,12 @@ export class jobVacancyController {
   //actualiza el dataVacancy
   updateVacancy = async (req, res, next) => {
     let objRes = {};
+    
     try {
       const { id } = req.params;
       const bodyParams = { ...req.body };
-      console.log("id:..", id);
+
+      console.log("-----------Actualizando PRUEBAS:..idVacancy :..", id);
       console.log("bodyparams:..", bodyParams);
       const { activities } = bodyParams;
       let tempArrarTask = [];
@@ -291,7 +417,7 @@ export class jobVacancyController {
         const { _id } = await jwtServices.verify(bodyParams.token);
         const retriveDataVacancie = await jobVacancy.findById(id);
         //este caso es cuando se agrega un id al array de applicants
-        if (!deleteApplicant) {
+        if (deleteApplicant===undefined) {
           if (retriveDataVacancie?.applicants) {
             bodyParams.applicants = [...retriveDataVacancie.applicants, _id];
           } else {
@@ -300,14 +426,16 @@ export class jobVacancyController {
           delete bodyParams.token;
         }
         //este es el caso cuando se elimina un id del array de applicants
-        if (deleteApplicant) {
+        if (deleteApplicant===true) {
           if (retriveDataVacancie?.applicants) {
             bodyParams.applicants = retriveDataVacancie.applicants.filter(
-              (item) => item._id !== _id
+              (item) => String(item._id) !== String(_id)
             );
           }
+          delete bodyParams.deleteApplicant;
           delete bodyParams.token;
         }
+        console.log("--------(NUEVOS DATOS...)bodyParams:..", bodyParams);
       }
 
       // -------------------------------------- update Image
@@ -351,12 +479,6 @@ export class jobVacancyController {
           res.status(201).json({ message: "Updated!", updateVacancy });
         }
       }
-      // -------------------------- end image
-      //     const infoVacancy=await jobVacancy.findByIdAndUpdate(id,bodyParams,{new:true})
-      //     if(!infoVacancy){
-      //         return res.status(404).send({message:'Vacancy not found!'})
-      //     }
-      //     res.status(201).send(infoVacancy)
     } catch (error) {
       console.log(error);
       next(error);
@@ -369,33 +491,34 @@ export class jobVacancyController {
       const result = await jobVacancy.findByIdAndUpdate(
         { _id: idVacancy },
         {
-          $pull: { applicants: idCandidate },
           $addToSet: { rejecteds: idCandidate },
+          $pull: { applicants: idCandidate },
+          
         },
         { new: true }
       );
-      const findUser = await User.findById({_id:idCandidate});
-      let tempDataPhaseStatus=[];
-      if(findUser){
-        if(findUser?.phase_status?.length>0){
-          tempDataPhaseStatus= [...findUser.phase_status];
-          const newPhaseStatus = tempDataPhaseStatus?.filter(el=>String(el.idVacancy)===String(idVacancy));
+      const findUser = await User.findById({ _id: idCandidate });
+      let tempDataPhaseStatus = [];
+      if (findUser) {
+        if (findUser?.phase_status?.length > 0) {
+          tempDataPhaseStatus = [...findUser.phase_status];
+          const newPhaseStatus = tempDataPhaseStatus?.filter(
+            (el) => String(el.idVacancy) === String(idVacancy)
+          );
           tempDataPhaseStatus = [...newPhaseStatus];
-        }else{
-          tempDataPhaseStatus=[...tempDataPhaseStatus];
+        } else {
+          tempDataPhaseStatus = [...tempDataPhaseStatus];
         }
-        
-
       }
       const updateUserMyVacancies = await User.findByIdAndUpdate(
         { _id: idCandidate },
         {
           $pull: { my_vacancies: idVacancy },
-          phase_status: [...tempDataPhaseStatus]
+          phase_status: [...tempDataPhaseStatus],
         },
         { new: true }
       );
-      sendRejectEmail(updateUserMyVacancies,result);
+      sendRejectEmail(updateUserMyVacancies, result);
       //console.log('resultUpdate (jobVacancyController):..',{result,updateUserMyVacancies});
       res.status(200).json({ result, updateUserMyVacancies });
     } catch (error) {
