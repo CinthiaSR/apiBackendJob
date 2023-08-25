@@ -248,7 +248,7 @@ export class jobVacancyController {
         { status: "Cerrado" },
         { new: true }
       );
-      const dataVacancy = { ...resultCloseVacancy };
+      const dataVacancy = { ...resultCloseVacancy?._doc };
       objRes = {
         idVacancy,
         listIdsApplicants,
@@ -265,6 +265,7 @@ export class jobVacancyController {
         }
         if (listMailsCandidates.length > 0) {
           const stringMails = listMailsCandidates.toString();
+          console.log("dataVacancy(enviando datos a NodeMailer):..", dataVacancy);
           const resultSendMails = await sendMailsCandidatesInVacancy(
             stringMails,
             dataVacancy
