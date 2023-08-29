@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 class JwtServices {
     sign(
-      payload, expiry = '2h',
+      payload, expiry = '24h',
       secret = process.env.JWT_SECRET
     ) {
       return jwt.sign(

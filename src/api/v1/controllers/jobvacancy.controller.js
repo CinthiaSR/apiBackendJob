@@ -148,19 +148,22 @@ export class jobVacancyController {
         page: page,
         limit: limit,
         sort: { createdAt: "desc" },
-        populate: "applicants",
-        populate: "job_skills",
-        populate: "username",
+        populate: ["applicants","job_skills","username","rejecteds"],
         // status:'Iniciado'
       };
 
       await jobVacancy.paginate(query, options, (err, docs) => {
+        if (err) {
+          console.log('Error al interior de Paginate:...',err);
+        }
         res.status(200).json({
           item: docs,
+          msg: "Get All Job Vacancy",
         });
       });
  
     } catch (error) {
+      console.log('Error al recuperar las Vacantes:..',error);
       next(error);
     }
   };
@@ -186,13 +189,16 @@ export class jobVacancyController {
         populate: "username",
         populate: "applicants",
         populate: "job_skills",
+        populate: "rejecteds",
         // status:'Iniciado'
       };
+      const listVacanciesByUser=await jobVacancy.find({username:_id});
 
       await jobVacancy.paginate(query, options, (err, docs) => {
         res.status(200).json({
           item: docs,
-          dataRecrutier:dataUser.email
+          dataRecrutier:dataUser.email,
+          listVacanciesByUser
         });
       });
     } catch (error) {
@@ -248,7 +254,7 @@ export class jobVacancyController {
         { status: "Cerrado" },
         { new: true }
       );
-      const dataVacancy = { ...resultCloseVacancy };
+      const dataVacancy = { ...resultCloseVacancy?._doc };
       objRes = {
         idVacancy,
         listIdsApplicants,
@@ -265,6 +271,7 @@ export class jobVacancyController {
         }
         if (listMailsCandidates.length > 0) {
           const stringMails = listMailsCandidates.toString();
+          console.log("dataVacancy(enviando datos a NodeMailer):..", dataVacancy);
           const resultSendMails = await sendMailsCandidatesInVacancy(
             stringMails,
             dataVacancy
