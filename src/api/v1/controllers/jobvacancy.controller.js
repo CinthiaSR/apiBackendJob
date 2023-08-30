@@ -96,7 +96,6 @@ export class jobVacancyController {
   getDataConsult = async (req, res, next) => {
     const { value, page, limit } = req.query;
     try {
-
       const query = {
         $or: [
           { title: value },
@@ -105,7 +104,7 @@ export class jobVacancyController {
           { city: value },
           { mode: value },
         ],
-        status:'Iniciado',
+        status: "Iniciado",
       };
       const options = {
         page: page,
@@ -158,7 +157,6 @@ export class jobVacancyController {
           item: docs,
         });
       });
- 
     } catch (error) {
       next(error);
     }
@@ -168,16 +166,16 @@ export class jobVacancyController {
     const { token } = req.params;
 
     //recuperar las vacantes del reclutador..
-    
+
     try {
       const { _id } = await jwtServices.verify(token);
-      console.log('Recuperar las vacantes del reclutador:..',_id);
+      console.log("Recuperar las vacantes del reclutador:..", _id);
       const { page, limit } = req.query;
       const query = {
         status: "Iniciado",
         username: _id,
       };
-      const dataUser= await User.findById(_id);
+      const dataUser = await User.findById(_id);
       const options = {
         page: page,
         limit: limit,
@@ -191,7 +189,7 @@ export class jobVacancyController {
       await jobVacancy.paginate(query, options, (err, docs) => {
         res.status(200).json({
           item: docs,
-          dataRecrutier:dataUser.email
+          dataRecrutier: dataUser.email,
         });
       });
     } catch (error) {
@@ -387,7 +385,7 @@ export class jobVacancyController {
   //actualiza el dataVacancy
   updateVacancy = async (req, res, next) => {
     let objRes = {};
-    
+
     try {
       const { id } = req.params;
       const bodyParams = { ...req.body };
@@ -416,7 +414,7 @@ export class jobVacancyController {
         const { _id } = await jwtServices.verify(bodyParams.token);
         const retriveDataVacancie = await jobVacancy.findById(id);
         //este caso es cuando se agrega un id al array de applicants
-        if (deleteApplicant===undefined) {
+        if (deleteApplicant === undefined) {
           if (retriveDataVacancie?.applicants) {
             bodyParams.applicants = [...retriveDataVacancie.applicants, _id];
           } else {
@@ -425,7 +423,7 @@ export class jobVacancyController {
           delete bodyParams.token;
         }
         //este es el caso cuando se elimina un id del array de applicants
-        if (deleteApplicant===true) {
+        if (deleteApplicant === true) {
           if (retriveDataVacancie?.applicants) {
             bodyParams.applicants = retriveDataVacancie.applicants.filter(
               (item) => String(item._id) !== String(_id)
